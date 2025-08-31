@@ -68,46 +68,215 @@ export default function Dashboard() {
         </div>
       </div>
       
-      <div className="stats-grid">
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+        gap: '24px',
+        marginBottom: '32px'
+      }}>
         {stats.map((stat, index) => (
-          <div key={index} className="stat-card">
-            <div className="stat-header">
-              <div className="stat-icon-container" style={{ backgroundColor: stat.color + '15' }}>
-                <stat.icon size={24} color={stat.color} />
+          <div 
+            key={index} 
+            style={{
+              background: 'white',
+              borderRadius: '16px',
+              border: '1px solid #e2e8f0',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+              padding: '24px',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              position: 'relative',
+              overflow: 'hidden'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-4px)';
+              e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.12)';
+              e.currentTarget.style.borderColor = '#cbd5e1';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.08)';
+              e.currentTarget.style.borderColor = '#e2e8f0';
+            }}
+          >
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              width: '100px',
+              height: '100px',
+              background: `linear-gradient(135deg, ${stat.color}15, ${stat.color}05)`,
+              borderRadius: '50%',
+              transform: 'translate(30px, -30px)'
+            }}></div>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              marginBottom: '16px',
+              position: 'relative',
+              zIndex: 1
+            }}>
+              <div style={{
+                width: '60px',
+                height: '60px',
+                borderRadius: '16px',
+                background: `linear-gradient(135deg, ${stat.color}, ${stat.color}dd)`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: `0 8px 25px ${stat.color}30`
+              }}>
+                <stat.icon size={28} color="white" />
               </div>
-              <div className="stat-trend">
-                <MdTrendingUp size={16} color="#10b981" />
-                <span className="stat-change">{stat.change}</span>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '6px 12px',
+                borderRadius: '20px',
+                background: '#dcfce7',
+                border: '1px solid #bbf7d0'
+              }}>
+                <MdTrendingUp size={14} color="#166534" />
+                <span style={{
+                  fontSize: '12px',
+                  fontWeight: '600',
+                  color: '#166534'
+                }}>{stat.change}</span>
               </div>
             </div>
-            <div className="stat-content">
-              <h3 className="stat-value">{stat.value}</h3>
-              <p className="stat-label">{stat.title}</p>
-            </div>
-            <div className="stat-footer">
-              <span className="stat-period">vs last month</span>
+            <div style={{
+              position: 'relative',
+              zIndex: 1
+            }}>
+              <h3 style={{
+                fontSize: '32px',
+                fontWeight: '800',
+                color: '#1e293b',
+                margin: '0 0 8px 0',
+                lineHeight: '1.2'
+              }}>{stat.value}</h3>
+              <p style={{
+                fontSize: '16px',
+                color: '#64748b',
+                margin: '0 0 12px 0',
+                fontWeight: '500'
+              }}>{stat.title}</p>
+              <div style={{
+                fontSize: '12px',
+                color: '#94a3b8',
+                fontWeight: '500'
+              }}>vs last month</div>
             </div>
           </div>
         ))}
       </div>
       
       <div className="dashboard-grid">
-        <div className="dashboard-card recent-orders">
-          <div className="card-header">
-            <h3 className="card-title">Recent Orders</h3>
-            <button className="view-all-btn">View All</button>
+        <div style={{
+          background: 'white',
+          borderRadius: '16px',
+          border: '1px solid #e2e8f0',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+          padding: '24px'
+        }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '20px'
+          }}>
+            <h3 style={{
+              fontSize: '20px',
+              fontWeight: '700',
+              color: '#1e293b',
+              margin: 0
+            }}>Recent Orders</h3>
+            <button style={{
+              background: 'none',
+              border: 'none',
+              color: '#3b82f6',
+              fontWeight: '600',
+              cursor: 'pointer',
+              fontSize: '14px',
+              padding: '8px 16px',
+              borderRadius: '8px',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = '#eff6ff';
+              e.target.style.color = '#2563eb';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = 'none';
+              e.target.style.color = '#3b82f6';
+            }}>View All</button>
           </div>
-          <div className="orders-container">
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px'
+          }}>
             {recentOrders.map((order, i) => (
-              <div key={i} className="order-item">
-                <div className="order-info">
-                  <div className="order-id">{order.id}</div>
-                  <div className="order-customer">{order.customer}</div>
-                  <div className="order-date">{order.date}</div>
+              <div 
+                key={i} 
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '16px',
+                  background: '#f8fafc',
+                  borderRadius: '12px',
+                  border: '1px solid #e2e8f0',
+                  transition: 'all 0.3s ease',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#f1f5f9';
+                  e.currentTarget.style.transform = 'translateX(4px)';
+                  e.currentTarget.style.borderColor = '#cbd5e1';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = '#f8fafc';
+                  e.currentTarget.style.transform = 'translateX(0)';
+                  e.currentTarget.style.borderColor = '#e2e8f0';
+                }}
+              >
+                <div>
+                  <div style={{
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#1e293b',
+                    marginBottom: '4px'
+                  }}>{order.id}</div>
+                  <div style={{
+                    fontSize: '14px',
+                    color: '#64748b',
+                    marginBottom: '2px'
+                  }}>{order.customer}</div>
+                  <div style={{
+                    fontSize: '12px',
+                    color: '#94a3b8'
+                  }}>{order.date}</div>
                 </div>
-                <div className="order-details">
-                  <div className="order-amount">₹{order.amount.toLocaleString()}</div>
-                  <span className={`order-status status-${order.status}`}>
+                <div style={{
+                  textAlign: 'right'
+                }}>
+                  <div style={{
+                    fontSize: '16px',
+                    fontWeight: '700',
+                    color: '#1e293b',
+                    marginBottom: '4px'
+                  }}>₹{order.amount.toLocaleString()}</div>
+                  <span style={{
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    padding: '4px 8px',
+                    borderRadius: '12px',
+                    background: order.status === 'delivered' ? '#dcfce7' : order.status === 'pending' ? '#fef3c7' : '#ddd6fe',
+                    color: order.status === 'delivered' ? '#166534' : order.status === 'pending' ? '#92400e' : '#5b21b6'
+                  }}>
                     {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                   </span>
                 </div>
@@ -116,42 +285,165 @@ export default function Dashboard() {
           </div>
         </div>
         
-        <div className="dashboard-card quick-actions">
-          <div className="card-header">
-            <h3 className="card-title">Quick Actions</h3>
+        <div style={{
+          background: 'white',
+          borderRadius: '16px',
+          border: '1px solid #e2e8f0',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+          padding: '24px'
+        }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '20px'
+          }}>
+            <h3 style={{
+              fontSize: '20px',
+              fontWeight: '700',
+              color: '#1e293b',
+              margin: 0
+            }}>Quick Actions</h3>
           </div>
-          <div className="actions-grid">
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: '16px'
+          }}>
             {quickActions.map((action, i) => (
-              <button key={i} className="action-card" style={{ '--accent-color': action.color }}>
-                <div className="action-icon">
-                  <action.icon size={24} />
+              <button 
+                key={i} 
+                style={{
+                  padding: '20px',
+                  border: '2px solid #e2e8f0',
+                  borderRadius: '12px',
+                  background: 'white',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '12px',
+                  textAlign: 'center'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.borderColor = action.color;
+                  e.target.style.background = `${action.color}08`;
+                  e.target.style.transform = 'translateY(-2px)';
+                  e.target.style.boxShadow = `0 8px 25px ${action.color}20`;
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.borderColor = '#e2e8f0';
+                  e.target.style.background = 'white';
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = 'none';
+                }}
+              >
+                <div style={{
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '12px',
+                  background: `linear-gradient(135deg, ${action.color}, ${action.color}dd)`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: `0 4px 15px ${action.color}30`
+                }}>
+                  <action.icon size={24} color="white" />
                 </div>
-                <span className="action-title">{action.title}</span>
+                <span style={{
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: '#475569'
+                }}>{action.title}</span>
               </button>
             ))}
           </div>
         </div>
 
-        <div className="dashboard-card analytics">
-          <div className="card-header">
-            <h3 className="card-title">Sales Analytics</h3>
-            <FaChartLine size={20} color="#6b7280" />
+        <div style={{
+          background: 'white',
+          borderRadius: '16px',
+          border: '1px solid #e2e8f0',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+          padding: '24px'
+        }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '20px'
+          }}>
+            <h3 style={{
+              fontSize: '20px',
+              fontWeight: '700',
+              color: '#1e293b',
+              margin: 0
+            }}>Sales Analytics</h3>
+            <FaChartLine size={20} color="#64748b" />
           </div>
-          <div className="analytics-content">
-            <div className="analytics-chart">
-              <div className="chart-placeholder">
-                <FaChartLine size={48} color="#e5e7eb" />
-                <p>Chart visualization would go here</p>
-              </div>
+          <div>
+            <div style={{
+              height: '200px',
+              background: 'linear-gradient(135deg, #f8fafc, #e2e8f0)',
+              borderRadius: '12px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '20px',
+              border: '2px dashed #cbd5e1'
+            }}>
+              <FaChartLine size={48} color="#94a3b8" />
+              <p style={{
+                color: '#64748b',
+                fontSize: '14px',
+                margin: '8px 0 0 0',
+                fontWeight: '500'
+              }}>Chart visualization would go here</p>
             </div>
-            <div className="analytics-summary">
-              <div className="summary-item">
-                <span className="summary-label">This Week</span>
-                <span className="summary-value">₹45,200</span>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '16px'
+            }}>
+              <div style={{
+                padding: '16px',
+                background: '#f8fafc',
+                borderRadius: '12px',
+                border: '1px solid #e2e8f0',
+                textAlign: 'center'
+              }}>
+                <div style={{
+                  fontSize: '12px',
+                  color: '#64748b',
+                  fontWeight: '500',
+                  marginBottom: '4px'
+                }}>This Week</div>
+                <div style={{
+                  fontSize: '20px',
+                  fontWeight: '700',
+                  color: '#1e293b'
+                }}>₹45,200</div>
               </div>
-              <div className="summary-item">
-                <span className="summary-label">Last Week</span>
-                <span className="summary-value">₹38,900</span>
+              <div style={{
+                padding: '16px',
+                background: '#f8fafc',
+                borderRadius: '12px',
+                border: '1px solid #e2e8f0',
+                textAlign: 'center'
+              }}>
+                <div style={{
+                  fontSize: '12px',
+                  color: '#64748b',
+                  fontWeight: '500',
+                  marginBottom: '4px'
+                }}>Last Week</div>
+                <div style={{
+                  fontSize: '20px',
+                  fontWeight: '700',
+                  color: '#1e293b'
+                }}>₹38,900</div>
               </div>
             </div>
           </div>

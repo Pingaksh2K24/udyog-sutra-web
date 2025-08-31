@@ -1,0 +1,84 @@
+.dropdown-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.dropdown-label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.required {
+  color: #ef4444;
+  font-size: 16px;
+}
+
+.common-dropdown {
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 15px;
+  font-family: inherit;
+  background: white;
+  color: #1e293b;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: 40px;
+}
+
+.common-dropdown:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  transform: translateY(-1px);
+}
+
+.common-dropdown:disabled {
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: not-allowed;
+  border-color: #cbd5e1;
+}
+
+.common-dropdown option {
+  padding: 12px 16px;
+  background: white;
+  color: #1e293b;
+  font-weight: 500;
+  border-bottom: 1px solid #f1f5f9;
+  transition: all 0.2s ease;
+}
+
+.common-dropdown option:hover {
+  background: #f8fafc;
+  color: #3b82f6;
+}
+
+.common-dropdown option:checked,
+.common-dropdown option:focus {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  font-weight: 600;
+}
+
+.common-dropdown option:last-child {
+  border-bottom: none;
+  border-radius: 0 0 8px 8px;
+}
+
+.common-dropdown option:first-child {
+  border-radius: 8px 8px 0 0;
+}

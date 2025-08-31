@@ -216,6 +216,10 @@
   transition: all 0.3s ease;
 }
 
+.search-input-margin {
+  margin-top: 16px;
+}
+
 .search-input:focus {
   outline: none;
   border-color: #3b82f6;

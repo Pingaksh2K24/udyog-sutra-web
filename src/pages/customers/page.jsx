@@ -1,7 +1,37 @@
 import './style.css';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import Table from '../../components/table/Table';
+import ActionButtons from '../../components/action/ActionButtons';
+import Dropdown from '../../components/dropdown/Dropdown';
+import Input from '../../components/input/Input';
 
 export default function Customers() {
-  const customers = [
+  const [customers, setCustomers] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchCustomers = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get('http://localhost:5000/api/customers');
+      console.log('Customers API Response:', response);
+      console.log('Customers Data:', response.data);
+      setCustomers(response.data || []);
+    } catch (error) {
+      console.error('Customers API Error:', error);
+      console.log('Error Response:', error.response);
+      // Fallback to dummy data if API fails
+      setCustomers(dummyCustomers);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCustomers();
+  }, []);
+
+  const dummyCustomers = [
     { id: 1, name: 'Rajesh Traders', email: 'rajesh@traders.com', phone: '+91 98765 43210', type: 'Retailer', orders: 45, totalSpent: 125000, lastOrder: '2024-01-15', status: 'Active' },
     { id: 2, name: 'Sharma Wholesale', email: 'contact@sharma.com', phone: '+91 87654 32109', type: 'Wholesaler', orders: 78, totalSpent: 340000, lastOrder: '2024-01-18', status: 'Active' },
     { id: 3, name: 'Kumar Stores', email: 'kumar@stores.in', phone: '+91 76543 21098', type: 'Retailer', orders: 23, totalSpent: 67000, lastOrder: '2024-01-10', status: 'Inactive' },
@@ -20,7 +50,9 @@ export default function Customers() {
       <div className="customers-header">
         <h2 className="customers-title">Customer Management</h2>
         <div className="header-actions">
-          <button className="btn-secondary">Export List</button>
+          <button className="btn-secondary" onClick={fetchCustomers} disabled={loading}>
+            {loading ? 'Loading...' : 'Refresh'}
+          </button>
           <button className="btn-primary">Add Customer</button>
         </div>
       </div>
@@ -43,65 +75,49 @@ export default function Customers() {
 
       <div className="customers-filters">
         <div className="filter-group">
-          <select className="filter-select">
-            <option>All Types</option>
-            <option>Retailer</option>
-            <option>Wholesaler</option>
-            <option>Distributor</option>
-          </select>
-          <select className="filter-select">
-            <option>All Status</option>
-            <option>Active</option>
-            <option>Inactive</option>
-          </select>
+          <Dropdown 
+            placeholder="All Types"
+            options={['Retailer', 'Wholesaler', 'Distributor']}
+            className="filter-dropdown"
+          />
+          <Dropdown 
+            placeholder="All Status"
+            options={['Active', 'Inactive']}
+            className="filter-dropdown"
+          />
+          <Input 
+            type="text" 
+            placeholder="Search customers..."
+          />
         </div>
-        <input type="text" placeholder="Search customers..." className="search-input" />
       </div>
 
-      <div className="customers-table-container">
-        <div className="customers-table">
-          <div className="table-header">
-            <span>Customer</span>
-            <span>Contact</span>
-            <span>Type</span>
-            <span>Orders</span>
-            <span>Total Spent</span>
-            <span>Last Order</span>
-            <span>Status</span>
-            <span>Actions</span>
-          </div>
-          
-          {customers.map((customer) => (
-            <div key={customer.id} className="table-row">
-              <div className="customer-info">
-                <div className="customer-avatar">
-                  {customer.name.charAt(0)}
-                </div>
-                <div>
-                  <p className="customer-name">{customer.name}</p>
-                  <p className="customer-id">ID: CUST{customer.id.toString().padStart(3, '0')}</p>
-                </div>
-              </div>
-              <div className="contact-info">
-                <p className="email">{customer.email}</p>
-                <p className="phone">{customer.phone}</p>
-              </div>
-              <span className={`customer-type ${customer.type.toLowerCase()}`}>
-                {customer.type}
-              </span>
-              <span className="orders-count">{customer.orders}</span>
-              <span className="total-spent">₹{customer.totalSpent.toLocaleString()}</span>
-              <span className="last-order">{customer.lastOrder}</span>
-              <span className={`status ${customer.status.toLowerCase()}`}>
-                {customer.status}
-              </span>
-              <div className="action-buttons">
-                <button className="btn-view">View</button>
-                <button className="btn-edit">Edit</button>
-              </div>
-            </div>
-          ))}
-        </div>
+      <div style={{marginTop: '24px'}}>
+        <Table 
+          data={customers}
+          columns={[
+            { key: 'customerId', header: 'Customer ID', render: (row) => `CUST${row.customerId?.toString().padStart(3, '0') || ''}` },
+            { key: 'name', header: 'Name' },
+            { key: 'email', header: 'Email' },
+            { key: 'phone', header: 'Phone' },
+            { key: 'type', header: 'Type' },
+            { key: 'orders', header: 'Orders' },
+            { key: 'totalAmount', header: 'Total Spent', render: (row) => `₹${row.totalAmount?.toLocaleString() || '0'}` },
+            { key: 'status', header: 'Status', render: (row) => <span className={`status ${row.status?.toLowerCase()}`}>{row.status}</span> },
+            { 
+              key: 'actions', 
+              header: 'Actions',
+              render: (row) => (
+                <ActionButtons 
+                  onEdit={() => console.log('Edit customer:', row.customerId || row.id)}
+                  onDelete={() => console.log('Delete customer:', row.customerId || row.id)}
+                />
+              )
+            }
+          ]}
+          paginationFlag={true}
+          recordsPerPage={10}
+        />
       </div>
     </div>
   );

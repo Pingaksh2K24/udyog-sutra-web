@@ -18,14 +18,13 @@ export default function Sidebar({ activeTab, setActiveTab, sidebarOpen, setSideb
     <div className="sidebar-container" data-collapsed={!sidebarOpen} style={{ '--sidebar-width': sidebarOpen ? '240px' : '70px' }}>
       <div className="sidebar-header">
         <div className="sidebar-logo-container">
-          <div className="sidebar-logo">
-            US
-          </div>
+          <img src="/images/logo1.png" alt="Udyog" className="sidebar-logo-image" />
           {sidebarOpen && (
-            <div>
+            <div className="sidebar-info">
               <h3 className="sidebar-title">Udyog</h3>
             </div>
           )}
+          {sidebarOpen && <span className="version-badge">v2.1.0</span>}
         </div>
       </div>
 
@@ -53,25 +52,7 @@ export default function Sidebar({ activeTab, setActiveTab, sidebarOpen, setSideb
         {sidebarOpen ? '←' : '→'}
       </button>
 
-      {/* Footer Section */}
-      <div className="sidebar-footer">
-        {sidebarOpen && (
-          <div className="footer-content">
-            <div className="footer-single-line">
-              <div className="footer-logo">
-                <img src="/images/logo1.png" alt="Udyog" className="footer-logo-image" />
-                <span className="footer-logo-text">Udyog</span>
-              </div>
-              <span className="version-badge">v2.1.0</span>
-            </div>
-          </div>
-        )}
-        {!sidebarOpen && (
-          <div className="footer-collapsed">
-            <img src="/images/logo1.png" alt="Udyog Sutra" className="footer-logo-small" />
-          </div>
-        )}
-      </div>
+
     </div>
   );
 }

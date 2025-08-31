@@ -174,23 +174,101 @@ export default function Inventory() {
         </div>
       </div>
 
-      <div className="stats-grid">
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+        gap: '24px',
+        marginBottom: '32px'
+      }}>
         {stats.map((stat, index) => (
-          <div key={index} className="stat-card">
-            <div className="stat-header">
-              <div className="stat-icon-container" style={{ backgroundColor: stat.color + '15' }}>
-                <stat.icon size={24} color={stat.color} />
+          <div 
+            key={index} 
+            style={{
+              background: 'white',
+              borderRadius: '16px',
+              border: '1px solid #e2e8f0',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+              padding: '24px',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              position: 'relative',
+              overflow: 'hidden'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-4px)';
+              e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.12)';
+              e.currentTarget.style.borderColor = '#cbd5e1';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.08)';
+              e.currentTarget.style.borderColor = '#e2e8f0';
+            }}
+          >
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              width: '100px',
+              height: '100px',
+              background: `linear-gradient(135deg, ${stat.color}15, ${stat.color}05)`,
+              borderRadius: '50%',
+              transform: 'translate(30px, -30px)'
+            }}></div>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              marginBottom: '16px',
+              position: 'relative',
+              zIndex: 1
+            }}>
+              <div style={{
+                width: '60px',
+                height: '60px',
+                borderRadius: '16px',
+                background: `linear-gradient(135deg, ${stat.color}, ${stat.color}dd)`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: `0 8px 25px ${stat.color}30`
+              }}>
+                <stat.icon size={28} color="white" />
               </div>
-              <div className="stat-trend">
-                <MdBarChart size={16} color="#10b981" />
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '6px 12px',
+                borderRadius: '20px',
+                background: index === 1 || index === 2 ? '#fef3c7' : '#dcfce7',
+                border: `1px solid ${index === 1 || index === 2 ? '#fde68a' : '#bbf7d0'}`
+              }}>
+                <MdBarChart size={14} color={index === 1 || index === 2 ? '#92400e' : '#166534'} />
               </div>
             </div>
-            <div className="stat-content">
-              <h3 className="stat-value">{stat.value}</h3>
-              <p className="stat-label">{stat.title}</p>
-            </div>
-            <div className="stat-footer">
-              <span className="stat-change">{stat.change}</span>
+            <div style={{
+              position: 'relative',
+              zIndex: 1
+            }}>
+              <h3 style={{
+                fontSize: '32px',
+                fontWeight: '800',
+                color: '#1e293b',
+                margin: '0 0 8px 0',
+                lineHeight: '1.2'
+              }}>{stat.value}</h3>
+              <p style={{
+                fontSize: '16px',
+                color: '#64748b',
+                margin: '0 0 12px 0',
+                fontWeight: '500'
+              }}>{stat.title}</p>
+              <div style={{
+                fontSize: '12px',
+                color: '#94a3b8',
+                fontWeight: '500'
+              }}>{stat.change}</div>
             </div>
           </div>
         ))}

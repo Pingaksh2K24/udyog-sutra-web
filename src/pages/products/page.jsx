@@ -1,13 +1,41 @@
 import './style.css';
-import { MdAdd, MdSearch, MdEdit, MdDelete, MdFilterList, MdViewModule, MdViewList, MdMoreVert } from 'react-icons/md';
+import { MdAdd, MdEdit, MdDelete, MdViewModule, MdViewList, MdMoreVert } from 'react-icons/md';
 import { FaBoxes, FaTag, FaRupeeSign, FaWarehouse } from 'react-icons/fa';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import Dropdown from '../../components/dropdown/Dropdown';
+import Input from '../../components/input/Input';
+import Table from '../../components/table/Table';
+import ActionButtons from '../../components/action/ActionButtons';
 
 export default function Products() {
   const [viewMode, setViewMode] = useState('grid');
   const [searchTerm, setSearchTerm] = useState('');
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const products = [
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get('http://localhost:5000/api/products');
+      console.log('Products API Response:', response);
+      console.log('Products Data:', response.data);
+      setProducts(response.data || []);
+    } catch (error) {
+      console.error('Products API Error:', error);
+      console.log('Error Response:', error.response);
+      // Fallback to dummy data if API fails
+      setProducts(dummyProducts);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const dummyProducts = [
     {
       id: 1,
       name: 'Premium Basmati Rice',
@@ -97,9 +125,8 @@ export default function Products() {
           <p className="products-subtitle">Manage your inventory and product catalog</p>
         </div>
         <div className="header-actions">
-          <button className="filter-btn">
-            <MdFilterList size={20} />
-            <span>Filter</span>
+          <button className="filter-btn" onClick={fetchProducts} disabled={loading}>
+            {loading ? 'Loading...' : 'Refresh'}
           </button>
           <button className="add-product-btn">
             <MdAdd size={20} />
@@ -149,116 +176,294 @@ export default function Products() {
       
       <div className="products-controls">
         <div className="search-section">
-          <div className="search-container">
-            <MdSearch className="search-icon" size={20} />
-            <input 
-              type="text" 
-              placeholder="Search products by name or SKU..." 
-              className="search-input"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <select className="category-filter">
-            {categories.map(category => (
-              <option key={category} value={category}>{category}</option>
-            ))}
-          </select>
+          <Input 
+            type="text" 
+            placeholder="Search products by name or SKU..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <Dropdown 
+            placeholder="All Categories"
+            options={categories.slice(1)}
+          />
         </div>
         
         <div className="view-controls">
           <button 
             className={`view-btn ${viewMode === 'grid' ? 'active' : ''}`}
             onClick={() => setViewMode('grid')}
+            style={{
+              padding: '12px 16px',
+              border: viewMode === 'grid' ? '2px solid #3b82f6' : '2px solid #e2e8f0',
+              borderRadius: '12px',
+              background: viewMode === 'grid' ? 'linear-gradient(135deg, #3b82f6, #2563eb)' : 'white',
+              color: viewMode === 'grid' ? 'white' : '#64748b',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              fontWeight: '600',
+              fontSize: '14px',
+              boxShadow: viewMode === 'grid' ? '0 4px 15px rgba(59, 130, 246, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.05)'
+            }}
+            onMouseEnter={(e) => {
+              if (viewMode !== 'grid') {
+                e.target.style.background = '#f8fafc';
+                e.target.style.borderColor = '#cbd5e1';
+                e.target.style.transform = 'translateY(-1px)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (viewMode !== 'grid') {
+                e.target.style.background = 'white';
+                e.target.style.borderColor = '#e2e8f0';
+                e.target.style.transform = 'translateY(0)';
+              }
+            }}
           >
-            <MdViewModule size={20} />
+            <MdViewModule size={18} />
+            <span>Grid</span>
           </button>
           <button 
             className={`view-btn ${viewMode === 'list' ? 'active' : ''}`}
             onClick={() => setViewMode('list')}
+            style={{
+              padding: '12px 16px',
+              border: viewMode === 'list' ? '2px solid #3b82f6' : '2px solid #e2e8f0',
+              borderRadius: '12px',
+              background: viewMode === 'list' ? 'linear-gradient(135deg, #3b82f6, #2563eb)' : 'white',
+              color: viewMode === 'list' ? 'white' : '#64748b',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              fontWeight: '600',
+              fontSize: '14px',
+              boxShadow: viewMode === 'list' ? '0 4px 15px rgba(59, 130, 246, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.05)'
+            }}
+            onMouseEnter={(e) => {
+              if (viewMode !== 'list') {
+                e.target.style.background = '#f8fafc';
+                e.target.style.borderColor = '#cbd5e1';
+                e.target.style.transform = 'translateY(-1px)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (viewMode !== 'list') {
+                e.target.style.background = 'white';
+                e.target.style.borderColor = '#e2e8f0';
+                e.target.style.transform = 'translateY(0)';
+              }
+            }}
           >
-            <MdViewList size={20} />
+            <MdViewList size={18} />
+            <span>List</span>
           </button>
         </div>
       </div>
       
       {viewMode === 'grid' ? (
-        <div className="products-grid">
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+          gap: '24px',
+          marginTop: '24px'
+        }}>
           {filteredProducts.map((product) => (
-            <div key={product.id} className="product-card">
-              <div className="product-image">
-                <img src={product.image} alt={product.name} />
-                <div className="product-actions">
-                  <button className="action-btn edit">
+            <div 
+              key={product.id} 
+              style={{
+                background: 'white',
+                borderRadius: '16px',
+                border: '1px solid #e2e8f0',
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+                overflow: 'hidden',
+                transition: 'all 0.3s ease',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-8px)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.15)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.08)';
+              }}
+            >
+              <div style={{
+                position: 'relative',
+                height: '200px',
+                background: 'linear-gradient(135deg, #f8fafc, #e2e8f0)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <img 
+                  src={product.image} 
+                  alt={product.name} 
+                  style={{
+                    width: '120px',
+                    height: '120px',
+                    objectFit: 'cover',
+                    borderRadius: '12px',
+                    border: '2px solid white',
+                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
+                  }}
+                />
+                <div style={{
+                  position: 'absolute',
+                  top: '12px',
+                  right: '12px',
+                  display: 'flex',
+                  gap: '8px'
+                }}>
+                  <button style={{
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '50%',
+                    border: 'none',
+                    background: 'rgba(255, 255, 255, 0.9)',
+                    color: '#3b82f6',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+                  }}>
                     <MdEdit size={16} />
                   </button>
-                  <button className="action-btn delete">
+                  <button style={{
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '50%',
+                    border: 'none',
+                    background: 'rgba(255, 255, 255, 0.9)',
+                    color: '#ef4444',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+                  }}>
                     <MdDelete size={16} />
                   </button>
-                  <button className="action-btn more">
-                    <MdMoreVert size={16} />
-                  </button>
+                </div>
+                <div style={{
+                  position: 'absolute',
+                  top: '12px',
+                  left: '12px',
+                  padding: '6px 12px',
+                  borderRadius: '20px',
+                  fontSize: '12px',
+                  fontWeight: '600',
+                  background: product.stock === 0 ? '#fee2e2' : '#dcfce7',
+                  color: product.stock === 0 ? '#dc2626' : '#166534'
+                }}>
+                  {product.stock === 0 ? 'Out of Stock' : 'In Stock'}
                 </div>
               </div>
-              <div className="product-info">
-                <div className="product-header">
-                  <h3 className="product-name">{product.name}</h3>
-                  <span className={`stock-badge ${product.status}`}>
-                    {product.status === 'in-stock' ? 'In Stock' : 
-                     product.status === 'low-stock' ? 'Low Stock' : 'Out of Stock'}
-                  </span>
-                </div>
-                <p className="product-sku">SKU: {product.sku}</p>
-                <p className="product-category">{product.category}</p>
-                <p className="product-description">{product.description}</p>
-                <div className="product-footer">
-                  <div className="price-info">
-                    <span className="product-price">₹{product.price}</span>
-                    <span className="stock-count">{product.stock} units</span>
+              <div style={{
+                padding: '20px'
+              }}>
+                <h3 style={{
+                  fontSize: '18px',
+                  fontWeight: '700',
+                  color: '#1e293b',
+                  margin: '0 0 8px 0'
+                }}>{product.name}</h3>
+                <p style={{
+                  fontSize: '12px',
+                  color: '#64748b',
+                  margin: '0 0 8px 0'
+                }}>SKU: {product.sku}</p>
+                <p style={{
+                  fontSize: '14px',
+                  color: '#3b82f6',
+                  margin: '0 0 8px 0',
+                  fontWeight: '600'
+                }}>{product.category}</p>
+                <p style={{
+                  fontSize: '14px',
+                  color: '#64748b',
+                  margin: '0 0 16px 0',
+                  lineHeight: '1.4'
+                }}>{product.description}</p>
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingTop: '16px',
+                  borderTop: '1px solid #f1f5f9'
+                }}>
+                  <div>
+                    <div style={{
+                      fontSize: '20px',
+                      fontWeight: '800',
+                      color: '#1e293b'
+                    }}>₹{product.price}</div>
+                    <div style={{
+                      fontSize: '12px',
+                      color: '#64748b'
+                    }}>{product.stock} units</div>
                   </div>
-                  <span className="supplier-name">{product.supplier}</span>
+                  <div style={{
+                    fontSize: '12px',
+                    color: '#64748b',
+                    textAlign: 'right'
+                  }}>{product.supplier}</div>
                 </div>
               </div>
             </div>
           ))}
         </div>
       ) : (
-        <div className="products-table">
-          <div className="table-header">
-            <span>Product</span>
-            <span>Category</span>
-            <span>Price</span>
-            <span>Stock</span>
-            <span>Status</span>
-            <span>Actions</span>
-          </div>
-          
-          {filteredProducts.map((product) => (
-            <div key={product.id} className="table-row">
-              <div className="product-cell">
-                <img src={product.image} alt={product.name} className="product-thumb" />
-                <div className="product-details">
-                  <span className="product-name">{product.name}</span>
-                  <span className="product-sku">SKU: {product.sku}</span>
-                </div>
-              </div>
-              <span className="category-cell">{product.category}</span>
-              <span className="price-cell">₹{product.price}</span>
-              <span className="stock-cell">{product.stock} units</span>
-              <span className={`status-cell ${product.status}`}>
-                {product.status === 'in-stock' ? 'In Stock' : 
-                 product.status === 'low-stock' ? 'Low Stock' : 'Out of Stock'}
-              </span>
-              <div className="actions-cell">
-                <button className="table-action-btn edit">
-                  <MdEdit size={16} />
-                </button>
-                <button className="table-action-btn delete">
-                  <MdDelete size={16} />
-                </button>
-              </div>
-            </div>
-          ))}
+        <div style={{marginTop: '24px'}}>
+          <Table 
+            data={filteredProducts}
+            columns={[
+              { 
+                key: 'product', 
+                header: 'Product', 
+                render: (row) => (
+                  <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
+                    <img src={row.image} alt={row.name} style={{width: '40px', height: '40px', borderRadius: '8px'}} />
+                    <div>
+                      <div style={{fontWeight: '600'}}>{row.name}</div>
+                      <div style={{fontSize: '12px', color: '#64748b'}}>SKU: {row.sku}</div>
+                    </div>
+                  </div>
+                )
+              },
+              { key: 'category', header: 'Category' },
+              { key: 'price', header: 'Price', render: (row) => `₹${row.price}` },
+              { key: 'stock', header: 'Stock', render: (row) => `${row.stock} units` },
+              { 
+                key: 'status', 
+                header: 'Status', 
+                render: (row) => (
+                  <span className={`status ${row.stock === 0 ? 'out-of-stock' : 'in-stock'}`}>
+                    {row.stock === 0 ? 'Out of Stock' : 'In Stock'}
+                  </span>
+                )
+              },
+              { 
+                key: 'actions', 
+                header: 'Actions',
+                render: (row) => (
+                  <ActionButtons 
+                    onEdit={() => console.log('Edit product:', row.id)}
+                    onDelete={() => console.log('Delete product:', row.id)}
+                  />
+                )
+              }
+            ]}
+            paginationFlag={true}
+            recordsPerPage={10}
+          />
         </div>
       )}
     </div>

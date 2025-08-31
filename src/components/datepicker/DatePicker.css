@@ -1,0 +1,54 @@
+.datepicker-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.datepicker-label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.required {
+  color: #ef4444;
+  font-size: 16px;
+}
+
+.common-datepicker {
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 15px;
+  font-family: inherit;
+  background: white;
+  color: #1e293b;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.common-datepicker:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  transform: translateY(-1px);
+}
+
+.common-datepicker:disabled {
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: not-allowed;
+  border-color: #cbd5e1;
+}
+
+.common-datepicker::-webkit-calendar-picker-indicator {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'/%3e%3c/svg%3e");
+  background-size: 20px;
+  cursor: pointer;
+}

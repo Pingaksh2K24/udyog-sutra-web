@@ -55,13 +55,57 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard">
-      <div className="dashboard-header">
+      <div style={{
+        background: 'linear-gradient(135deg, #475569, #94a3b8)',
+        marginTop: '24px',
+        padding: '24px',
+        borderRadius: '16px',
+        marginBottom: '24px',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        border: '1px solid #e2e8f0'
+      }}>
         <div>
-          <h2 className="dashboard-title">Dashboard Overview</h2>
-          <p className="dashboard-subtitle">Welcome back! Here's what's happening with your business today.</p>
+          <h2 style={{
+            fontSize: '32px',
+            fontWeight: '800',
+            color: 'white',
+            margin: '0 0 8px 0'
+          }}>Dashboard Overview</h2>
+          <p style={{
+            color: 'rgba(255, 255, 255, 0.9)',
+            fontSize: '16px',
+            margin: 0,
+            fontWeight: '500'
+          }}>Welcome back! Here's what's happening with your business today.</p>
         </div>
-        <div className="dashboard-actions">
-          <button className="refresh-btn">
+        <div>
+          <button 
+            style={{
+              padding: '12px 24px',
+              border: '2px solid #e2e8f0',
+              borderRadius: '12px',
+              background: '#f1f5f9',
+              color: '#475569',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              fontSize: '14px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = '#e2e8f0';
+              e.target.style.transform = 'translateY(-1px)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = '#f1f5f9';
+              e.target.style.transform = 'translateY(0)';
+            }}
+          >
             <MdTrendingUp size={20} />
             <span>Refresh Data</span>
           </button>

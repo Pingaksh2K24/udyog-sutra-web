@@ -146,17 +146,89 @@ export default function Inventory() {
 
   return (
     <div className="inventory">
-      <div className="inventory-header">
-        <div className="header-left">
-          <h2 className="inventory-title">Inventory Management</h2>
-          <p className="inventory-subtitle">Monitor and manage your stock levels efficiently</p>
+      <div style={{
+        background: 'linear-gradient(135deg, #475569, #94a3b8)',
+        marginTop: '24px',
+        padding: '24px',
+        borderRadius: '16px',
+        marginBottom: '24px',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        border: '1px solid #e2e8f0'
+      }}>
+        <div>
+          <h2 style={{
+            fontSize: '32px',
+            fontWeight: '800',
+            color: 'white',
+            margin: '0 0 8px 0'
+          }}>Inventory Management</h2>
+          <p style={{
+            color: 'rgba(255, 255, 255, 0.9)',
+            fontSize: '16px',
+            margin: 0,
+            fontWeight: '500'
+          }}>Monitor and manage your stock levels efficiently</p>
         </div>
-        <div className="header-actions">
-          <button className="action-btn secondary">
+        <div style={{
+          display: 'flex',
+          gap: '12px',
+          alignItems: 'center'
+        }}>
+          <button 
+            style={{
+              padding: '12px 24px',
+              border: '2px solid #e2e8f0',
+              borderRadius: '12px',
+              background: '#f1f5f9',
+              color: '#475569',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              fontSize: '14px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = '#e2e8f0';
+              e.target.style.transform = 'translateY(-1px)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = '#f1f5f9';
+              e.target.style.transform = 'translateY(0)';
+            }}
+          >
             <MdFileDownload size={20} />
             <span>Export Report</span>
           </button>
-          <button className="action-btn primary">
+          <button 
+            style={{
+              padding: '12px 24px',
+              border: 'none',
+              borderRadius: '12px',
+              background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+              color: 'white',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              fontSize: '14px',
+              boxShadow: '0 4px 15px rgba(59, 130, 246, 0.3)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = 'translateY(-2px)';
+              e.target.style.boxShadow = '0 8px 25px rgba(59, 130, 246, 0.4)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.boxShadow = '0 4px 15px rgba(59, 130, 246, 0.3)';
+            }}
+          >
             <MdAdd size={20} />
             <span>Add Stock</span>
           </button>

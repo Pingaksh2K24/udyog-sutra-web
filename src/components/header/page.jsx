@@ -1,11 +1,15 @@
 import './style.css';
-import { IoNotifications, IoHelpBuoy, IoLogOut } from 'react-icons/io5';
-import { FaUser } from 'react-icons/fa';
+import { IoNotifications, IoHelpBuoy, IoLogOut, IoAdd } from 'react-icons/io5';
+import { FaUser, FaShoppingCart, FaShoppingBag } from 'react-icons/fa';
 import { useState } from 'react';
 
 export default function Header({ onLogout }) {
   const [showHelp, setShowHelp] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+
+  const handleNewSale = () => {
+    window.dispatchEvent(new CustomEvent('navigate', { detail: { page: 'sales' } }));
+  };
 
   return (
     <header className="header">
@@ -20,6 +24,14 @@ export default function Header({ onLogout }) {
         </div>
         
         <div className="header-right">
+          <button className="action-btn sale-btn" onClick={handleNewSale}>
+            <FaShoppingCart size={16} />
+            <span>New Sale</span>
+          </button>
+          <button className="action-btn purchase-btn">
+            <FaShoppingBag size={16} />
+            <span>New Purchase</span>
+          </button>
           <div className="help-container">
             <button 
               className="help-btn"

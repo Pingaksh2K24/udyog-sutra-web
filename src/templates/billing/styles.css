@@ -1,0 +1,292 @@
+/* Common Invoice Styles */
+.invoice-template {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background: white;
+  color: #333;
+  line-height: 1.4;
+}
+
+/* Standard Invoice */
+.invoice-template.standard .invoice-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #3b82f6;
+  padding-bottom: 20px;
+}
+
+.invoice-template.standard .company-info h1 {
+  color: #3b82f6;
+  margin: 0 0 10px 0;
+  font-size: 24px;
+}
+
+.invoice-template.standard .invoice-details h2 {
+  color: #3b82f6;
+  margin: 0 0 10px 0;
+  font-size: 28px;
+}
+
+.invoice-template.standard .customer-section {
+  margin: 20px 0;
+  padding: 15px;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+/* Retail Bill */
+.invoice-template.retail {
+  font-size: 14px;
+}
+
+.invoice-template.retail .bill-header {
+  text-align: center;
+  border-bottom: 2px solid #000;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+}
+
+.invoice-template.retail .store-info h2 {
+  margin: 0 0 5px 0;
+  font-size: 20px;
+}
+
+.invoice-template.retail .bill-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  font-size: 12px;
+}
+
+.invoice-template.retail .bill-summary {
+  margin-top: 15px;
+  border-top: 1px solid #ccc;
+  padding-top: 10px;
+}
+
+.invoice-template.retail .summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.invoice-template.retail .summary-row.total {
+  border-top: 1px solid #000;
+  padding-top: 5px;
+  font-size: 16px;
+}
+
+/* Wholesale Bill */
+.invoice-template.wholesale .letterhead {
+  text-align: center;
+  border-bottom: 3px solid #000;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+.invoice-template.wholesale .company-header h1 {
+  margin: 0 0 10px 0;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.invoice-template.wholesale .invoice-title {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.invoice-template.wholesale .invoice-title h2 {
+  background: #000;
+  color: white;
+  padding: 10px;
+  margin: 0;
+  font-size: 18px;
+}
+
+.invoice-template.wholesale .party-details {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.invoice-template.wholesale .party-details table {
+  border-collapse: collapse;
+}
+
+.invoice-template.wholesale .party-details table td {
+  padding: 3px 10px 3px 0;
+  border: none;
+}
+
+.invoice-template.wholesale .tax-summary {
+  margin-top: 20px;
+}
+
+.invoice-template.wholesale .amount-summary {
+  float: right;
+  width: 300px;
+  margin-top: 10px;
+}
+
+.invoice-template.wholesale .amount-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  padding: 3px 0;
+}
+
+.invoice-template.wholesale .amount-row.total {
+  border-top: 2px solid #000;
+  padding-top: 8px;
+  font-size: 16px;
+}
+
+.invoice-template.wholesale .terms {
+  clear: both;
+  margin-top: 30px;
+  font-size: 12px;
+}
+
+.invoice-template.wholesale .terms ul {
+  margin: 5px 0;
+  padding-left: 20px;
+}
+
+.invoice-template.wholesale .signature {
+  text-align: right;
+  margin-top: 40px;
+}
+
+/* Service Bill */
+.invoice-template.service .service-header {
+  text-align: center;
+  border-bottom: 2px solid #10b981;
+  padding-bottom: 20px;
+  margin-bottom: 25px;
+}
+
+.invoice-template.service .company-details h1 {
+  color: #10b981;
+  margin: 0 0 5px 0;
+  font-size: 24px;
+}
+
+.invoice-template.service .service-invoice-title {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.invoice-template.service .service-invoice-title h2 {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  padding: 12px;
+  margin: 0;
+  border-radius: 8px;
+}
+
+.invoice-template.service .service-details {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 25px;
+}
+
+.invoice-template.service .service-summary {
+  margin-top: 20px;
+}
+
+.invoice-template.service .summary-calculations {
+  float: right;
+  width: 350px;
+  background: #f8fafc;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.invoice-template.service .calc-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding: 2px 0;
+}
+
+.invoice-template.service .calc-row.total-amount {
+  border-top: 2px solid #10b981;
+  padding-top: 10px;
+  margin-top: 10px;
+  font-size: 16px;
+}
+
+.invoice-template.service .payment-terms {
+  clear: both;
+  margin-top: 30px;
+  background: #fef3c7;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 4px solid #f59e0b;
+}
+
+.invoice-template.service .service-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Common Table Styles */
+.items-table, .bill-table, .wholesale-table, .service-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+.items-table th, .bill-table th, .wholesale-table th, .service-table th,
+.items-table td, .bill-table td, .wholesale-table td, .service-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.items-table th, .bill-table th, .wholesale-table th, .service-table th {
+  background: #f5f5f5;
+  font-weight: bold;
+}
+
+.items-table td:last-child, .bill-table td:last-child, 
+.wholesale-table td:last-child, .service-table td:last-child {
+  text-align: right;
+}
+
+.tax-details table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-bottom: 15px;
+}
+
+.tax-details th, .tax-details td {
+  border: 1px solid #ddd;
+  padding: 5px;
+  text-align: center;
+}
+
+.tax-details th {
+  background: #f0f0f0;
+}
+
+/* Print Styles */
+@media print {
+  .invoice-template {
+    padding: 0;
+    box-shadow: none;
+    max-width: none;
+  }
+  
+  .invoice-template * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+}

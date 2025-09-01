@@ -11,6 +11,7 @@ import Suppliers from './pages/suppliers/page';
 import EditSupplier from './pages/suppliers/edit/page';
 import Reports from './pages/reports/page';
 import Settings from './pages/settings/page';
+import NewSalePage from './pages/sales/page';
 import CookiesHandler from './utils/CookiesHandler';
 import DatabaseService from './utils/DatabaseService';
 import ComprehensiveDataSeeder from './utils/ComprehensiveDataSeeder';
@@ -88,6 +89,7 @@ export default function AdminPanel() {
       case 'customers': return <Customers />;
       case 'suppliers': return <Suppliers />;
       case 'suppliers-edit': return <EditSupplier supplierId={routeParams.id} />;
+      case 'sales': return <NewSalePage />;
       case 'reports': return <Reports />;
       case 'settings': return <Settings />;
       default: return <Dashboard />;

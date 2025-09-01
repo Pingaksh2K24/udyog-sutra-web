@@ -377,14 +377,79 @@
 
 .modal-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
   padding: 20px 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.action-group {
+  display: flex;
+  gap: 8px;
+}
+
+.primary-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.download-btn {
+  background: #10b981;
+  color: white;
+}
+
+.download-btn:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+.gmail-btn {
+  background: #dc2626;
+  color: white;
+}
+
+.gmail-btn:hover {
+  background: #b91c1c;
+  transform: translateY(-1px);
+}
+
+.whatsapp-btn {
+  background: #16a34a;
+  color: white;
+}
+
+.whatsapp-btn:hover {
+  background: #15803d;
+  transform: translateY(-1px);
+}
+
+.share-btn {
+  background: #6366f1;
+  color: white;
+}
+
+.share-btn:hover {
+  background: #4f46e5;
+  transform: translateY(-1px);
 }
 
 .cancel-btn,
 .print-template-btn {
-  padding: 10px 20px;
+  padding: 12px 20px;
   border: none;
   border-radius: 8px;
   font-size: 14px;

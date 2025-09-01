@@ -7,6 +7,24 @@ export default function Settings() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({});
+  const [gstSettings, setGstSettings] = useState({
+    gstNumber: '',
+    businessName: '',
+    businessAddress: '',
+    stateCode: '',
+    panNumber: '',
+    defaultTaxRates: {
+      cgst: 9,
+      sgst: 9,
+      igst: 18
+    },
+    hsnCodes: [
+      { code: '1234', description: 'General Goods', rate: 18 },
+      { code: '5678', description: 'Electronics', rate: 28 }
+    ],
+    gstEnabled: true,
+    compositeScheme: false
+  });
 
   useEffect(() => {
     fetchSettings();
@@ -41,7 +59,8 @@ export default function Settings() {
         systemPreferences: formData.systemPreferences,
         preferences: formData.preferences,
         privacy: formData.privacy,
-        ui: formData.ui
+        ui: formData.ui,
+        gstSettings: gstSettings
       };
       
       console.log('Saving settings clean data:', cleanData);
@@ -95,9 +114,47 @@ export default function Settings() {
       if (label === 'Auto Backup') updatedData.systemPreferences.autoBackup = value;
       if (label === 'API Access') updatedData.systemPreferences.apiAccess = value;
       if (label === 'Debug Mode') updatedData.systemPreferences.debugMode = value;
+    } else if (category === 'GST Settings') {
+      if (label === 'GST Enabled') setGstSettings({...gstSettings, gstEnabled: value});
+      if (label === 'Composite Scheme') setGstSettings({...gstSettings, compositeScheme: value});
     }
     
     setFormData(updatedData);
+  };
+
+  const handleGstInputChange = (field, value) => {
+    setGstSettings({...gstSettings, [field]: value});
+  };
+
+  const handleTaxRateChange = (type, value) => {
+    setGstSettings({
+      ...gstSettings,
+      defaultTaxRates: {
+        ...gstSettings.defaultTaxRates,
+        [type]: parseFloat(value) || 0
+      }
+    });
+  };
+
+  const addHsnCode = () => {
+    setGstSettings({
+      ...gstSettings,
+      hsnCodes: [...gstSettings.hsnCodes, { code: '', description: '', rate: 18 }]
+    });
+  };
+
+  const removeHsnCode = (index) => {
+    setGstSettings({
+      ...gstSettings,
+      hsnCodes: gstSettings.hsnCodes.filter((_, i) => i !== index)
+    });
+  };
+
+  const updateHsnCode = (index, field, value) => {
+    const updatedHsnCodes = gstSettings.hsnCodes.map((hsn, i) => 
+      i === index ? { ...hsn, [field]: value } : hsn
+    );
+    setGstSettings({ ...gstSettings, hsnCodes: updatedHsnCodes });
   };
 
   const getDefaultSettings = () => ({
@@ -187,6 +244,16 @@ export default function Settings() {
         { label: 'Data Retention', value: formData.systemPreferences?.dataRetention || 'N/A', type: 'select' },
         { label: 'API Access', value: formData.systemPreferences?.apiAccess || false, type: 'toggle' },
         { label: 'Debug Mode', value: formData.systemPreferences?.debugMode || false, type: 'toggle' }
+      ]
+    },
+    {
+      title: 'GST Settings',
+      icon: '📋',
+      settings: [
+        { label: 'GST Enabled', value: gstSettings.gstEnabled, type: 'toggle' },
+        { label: 'Composite Scheme', value: gstSettings.compositeScheme, type: 'toggle' },
+        { label: 'GST Number', value: gstSettings.gstNumber, type: 'text' },
+        { label: 'State Code', value: gstSettings.stateCode, type: 'select' }
       ]
     }
   ];
@@ -440,6 +507,357 @@ export default function Settings() {
             </div>
           </div>
         ))}
+        
+        {/* GST Configuration Card */}
+        <div style={{
+          background: 'white',
+          borderRadius: '16px',
+          border: '1px solid #e2e8f0',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+          overflow: 'hidden',
+          gridColumn: '1 / -1'
+        }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+            padding: '20px 24px',
+            borderBottom: '1px solid #e2e8f0',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px'
+          }}>
+            <div style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '12px',
+              background: 'rgba(255, 255, 255, 0.2)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '20px'
+            }}>📋</div>
+            <h3 style={{
+              fontSize: '18px',
+              fontWeight: '700',
+              color: 'white',
+              margin: 0
+            }}>GST Configuration</h3>
+          </div>
+          
+          <div style={{ padding: '24px' }}>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '24px',
+              marginBottom: '24px'
+            }}>
+              <div>
+                <label style={{
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: '#374151',
+                  display: 'block',
+                  marginBottom: '8px'
+                }}>GST Number</label>
+                <input
+                  type="text"
+                  placeholder="12ABCDE1234F1Z5"
+                  value={gstSettings.gstNumber}
+                  onChange={(e) => handleGstInputChange('gstNumber', e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    border: '2px solid #e2e8f0',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '500'
+                  }}
+                />
+              </div>
+              <div>
+                <label style={{
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: '#374151',
+                  display: 'block',
+                  marginBottom: '8px'
+                }}>Business Name</label>
+                <input
+                  type="text"
+                  placeholder="Your Business Name"
+                  value={gstSettings.businessName}
+                  onChange={(e) => handleGstInputChange('businessName', e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    border: '2px solid #e2e8f0',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '500'
+                  }}
+                />
+              </div>
+              <div>
+                <label style={{
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: '#374151',
+                  display: 'block',
+                  marginBottom: '8px'
+                }}>PAN Number</label>
+                <input
+                  type="text"
+                  placeholder="ABCDE1234F"
+                  value={gstSettings.panNumber}
+                  onChange={(e) => handleGstInputChange('panNumber', e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    border: '2px solid #e2e8f0',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '500'
+                  }}
+                />
+              </div>
+              <div>
+                <label style={{
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: '#374151',
+                  display: 'block',
+                  marginBottom: '8px'
+                }}>State Code</label>
+                <select
+                  value={gstSettings.stateCode}
+                  onChange={(e) => handleGstInputChange('stateCode', e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    border: '2px solid #e2e8f0',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '500'
+                  }}
+                >
+                  <option value="">Select State</option>
+                  <option value="27">27 - Maharashtra</option>
+                  <option value="07">07 - Delhi</option>
+                  <option value="24">24 - Gujarat</option>
+                  <option value="29">29 - Karnataka</option>
+                  <option value="33">33 - Tamil Nadu</option>
+                  <option value="32">32 - Kerala</option>
+                  <option value="36">36 - Telangana</option>
+                  <option value="37">37 - Andhra Pradesh</option>
+                  <option value="19">19 - West Bengal</option>
+                  <option value="09">09 - Uttar Pradesh</option>
+                </select>
+              </div>
+            </div>
+            
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{
+                fontSize: '14px',
+                fontWeight: '600',
+                color: '#374151',
+                display: 'block',
+                marginBottom: '8px'
+              }}>Business Address</label>
+              <textarea
+                placeholder="Complete business address"
+                value={gstSettings.businessAddress}
+                onChange={(e) => handleGstInputChange('businessAddress', e.target.value)}
+                rows={3}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: '2px solid #e2e8f0',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  resize: 'vertical'
+                }}
+              />
+            </div>
+            
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+              gap: '16px',
+              marginBottom: '24px',
+              padding: '20px',
+              background: '#f8fafc',
+              borderRadius: '12px',
+              border: '1px solid #e2e8f0'
+            }}>
+              <div>
+                <label style={{
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: '#374151',
+                  display: 'block',
+                  marginBottom: '8px'
+                }}>CGST Rate (%)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={gstSettings.defaultTaxRates.cgst}
+                  onChange={(e) => handleTaxRateChange('cgst', e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    border: '2px solid #e2e8f0',
+                    borderRadius: '6px',
+                    fontSize: '14px'
+                  }}
+                />
+              </div>
+              <div>
+                <label style={{
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: '#374151',
+                  display: 'block',
+                  marginBottom: '8px'
+                }}>SGST Rate (%)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={gstSettings.defaultTaxRates.sgst}
+                  onChange={(e) => handleTaxRateChange('sgst', e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    border: '2px solid #e2e8f0',
+                    borderRadius: '6px',
+                    fontSize: '14px'
+                  }}
+                />
+              </div>
+              <div>
+                <label style={{
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: '#374151',
+                  display: 'block',
+                  marginBottom: '8px'
+                }}>IGST Rate (%)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={gstSettings.defaultTaxRates.igst}
+                  onChange={(e) => handleTaxRateChange('igst', e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    border: '2px solid #e2e8f0',
+                    borderRadius: '6px',
+                    fontSize: '14px'
+                  }}
+                />
+              </div>
+            </div>
+            
+            <div>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '16px'
+              }}>
+                <h4 style={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  color: '#374151',
+                  margin: 0
+                }}>HSN/SAC Codes</h4>
+                <button
+                  onClick={addHsnCode}
+                  style={{
+                    padding: '8px 16px',
+                    background: '#10b981',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                >
+                  + Add HSN Code
+                </button>
+              </div>
+              
+              <div style={{
+                display: 'grid',
+                gap: '12px'
+              }}>
+                {gstSettings.hsnCodes.map((hsn, index) => (
+                  <div key={index} style={{
+                    display: 'grid',
+                    gridTemplateColumns: '150px 1fr 100px 60px',
+                    gap: '12px',
+                    alignItems: 'center',
+                    padding: '12px',
+                    background: 'white',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '8px'
+                  }}>
+                    <input
+                      type="text"
+                      placeholder="HSN Code"
+                      value={hsn.code}
+                      onChange={(e) => updateHsnCode(index, 'code', e.target.value)}
+                      style={{
+                        padding: '8px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '4px',
+                        fontSize: '14px'
+                      }}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Description"
+                      value={hsn.description}
+                      onChange={(e) => updateHsnCode(index, 'description', e.target.value)}
+                      style={{
+                        padding: '8px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '4px',
+                        fontSize: '14px'
+                      }}
+                    />
+                    <input
+                      type="number"
+                      placeholder="Rate"
+                      value={hsn.rate}
+                      onChange={(e) => updateHsnCode(index, 'rate', parseFloat(e.target.value) || 0)}
+                      style={{
+                        padding: '8px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '4px',
+                        fontSize: '14px'
+                      }}
+                    />
+                    <button
+                      onClick={() => removeHsnCode(index)}
+                      style={{
+                        padding: '8px',
+                        background: '#ef4444',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '12px'
+                      }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div style={{

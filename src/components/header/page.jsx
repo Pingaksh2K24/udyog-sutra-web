@@ -2,6 +2,7 @@ import './style.css';
 import { IoNotifications, IoHelpBuoy, IoLogOut, IoAdd } from 'react-icons/io5';
 import { FaUser, FaShoppingCart, FaShoppingBag } from 'react-icons/fa';
 import { useState } from 'react';
+import Database from '../../database/index.js';
 
 export default function Header({ onLogout }) {
   const [showHelp, setShowHelp] = useState(false);
@@ -16,7 +17,7 @@ export default function Header({ onLogout }) {
       <div className="header-content">
         <div className="header-left">
           <h1 className="header-title">
-            Welcome, Admin!
+            Welcome, {Database.settings.getBusinessName() || 'Admin'}!
           </h1>
           <p className="header-subtitle">
             Manage your retail and wholesale business efficiently

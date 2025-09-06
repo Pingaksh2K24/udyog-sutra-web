@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Router from '../../../utils/Router';
 import './style.css';
+import toast from 'react-hot-toast';
 
 export default function EditSupplier({ supplierId }) {
   const [supplier, setSupplier] = useState(null);
@@ -32,11 +33,11 @@ export default function EditSupplier({ supplierId }) {
     try {
       const response = await axios.put(`http://localhost:5000/api/suppliers/${id}`, supplier);
       console.log('Supplier updated:', response.data);
-      alert('Supplier updated successfully!');
+      toast.success('Supplier updated successfully!', { position: 'top-left' });
       Router.navigate('suppliers');
     } catch (error) {
       console.error('Error updating supplier:', error);
-      alert(error.response?.data?.message || 'Failed to update supplier');
+      toast.error(error.response?.data?.message || 'Failed to update supplier', { position: 'top-left' });
     } finally {
       setLoading(false);
     }

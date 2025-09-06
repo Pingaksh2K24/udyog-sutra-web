@@ -272,7 +272,26 @@ export default function Suppliers() {
           // { key: 'paymentTerms', header: 'Payment Terms' },
           // { key: 'creditLimit', header: 'Credit Limit', render: (row) => `₹${row.creditLimit?.toLocaleString() || '0'}` },
           // { key: 'rating', header: 'Rating', render: (row) => `⭐ ${row.rating || 'N/A'}` },
-          { key: 'status', header: 'Status', render: (row) => <span className={`status ${row.status?.toLowerCase()}`}>{row.status}</span> },
+          { key: 'status', header: 'Status', render: (row) => (
+            <span 
+              className={`status-badge ${row.status?.toLowerCase()}`}
+              style={{
+                padding: '6px 12px',
+                borderRadius: '8px',
+                fontSize: '12px',
+                fontWeight: '600',
+                textTransform: 'capitalize',
+                backgroundColor: row.status?.toLowerCase() === 'active' ? '#dcfce7' : 
+                                row.status?.toLowerCase() === 'inactive' ? '#fee2e2' : '#f3f4f6',
+                color: row.status?.toLowerCase() === 'active' ? '#166534' : 
+                       row.status?.toLowerCase() === 'inactive' ? '#dc2626' : '#6b7280',
+                border: `1px solid ${row.status?.toLowerCase() === 'active' ? '#bbf7d0' : 
+                                     row.status?.toLowerCase() === 'inactive' ? '#fecaca' : '#e5e7eb'}`
+              }}
+            >
+              {row.status}
+            </span>
+          ) },
           // { key: 'lastUpdated', header: 'Last Updated' },
           { 
             key: 'actions', 

@@ -4,6 +4,8 @@ import { FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { setAuthProps } from '../../utils/AuthenticationLibrary';
 import CookiesHandler from '../../utils/CookiesHandler';
 import axios from 'axios';
+import toast, { Toaster } from 'react-hot-toast';
+import Database from '../../database/index.js';
 
 export default function Login({ onLogin }) {
   const [formData, setFormData] = useState({
@@ -51,17 +53,37 @@ export default function Login({ onLogin }) {
         password: formData.password
       });
       console.log(`Check Login Response:`, response);
-      if (response.data.success) {
-        // Save auth details to cookies for 1 hour
+      if (response.status===200 && response?.data?.success) {
+        // Save actual API response data to cookies
         const authData = {
-          ...authDetails,
-          ...response.data.user,
-          email: formData.username,
-          lastLogin: new Date().toISOString(),
-          sessionExpiry: new Date(Date.now() + 60 * 60 * 1000).toISOString() // 1 hour
+          ...response.data,
+          loginTime: new Date().toISOString(),
+          sessionExpiry: new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString() // 8 hours
         };
-        CookiesHandler.set('authDetails', JSON.stringify(authData), 1/24); // 1 hour in days
-        CookiesHandler.set('isLoggedIn', 'true', 1/24);
+        
+        // Save for 8 hours with advanced settings
+        CookiesHandler.set('authDetails', JSON.stringify(authData), 8/24);
+        CookiesHandler.set('isLoggedIn', 'true', 8/24);
+        CookiesHandler.set('userToken', response.data.token || '', 8/24);
+        CookiesHandler.set('userId', response.data.user?.user_id || response.data.user?.id || '', 8/24);
+        CookiesHandler.set('userRole', response.data.user?.role || 'user', 8/24);
+        
+        // Call settings API after successful login
+        try {
+          const settingsResponse = await axios.get(`http://localhost:5000/api/settings/${response.data.user?.user_id}`, {
+            theme: 'dark',
+            language: 'hi'
+          }, {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+          console.log('Settings API Response:', settingsResponse);
+          // Store settings response in database
+          Database.settings.storeSettingsResponse(settingsResponse);
+        } catch (settingsError) {
+          console.error('Settings API Error:', settingsError);
+        }
         
         // Fetch products after login
         try {
@@ -71,38 +93,24 @@ export default function Login({ onLogin }) {
           console.error('Products fetch error:', productsError);
         }
         
+        // Show personalized welcome message
+        const userName = response.data.user?.fullName || response.data.user?.name || 'User';
+        toast.success(`Welcome back, ${userName}!`, {
+          duration: 3000,
+          position: 'top-left'
+        });
         onLogin();
       } else {
-        alert(response.data.message || 'Invalid credentials!');
+        toast.error(response.data.message || 'Invalid credentials!', { position: 'top-left' });
       }
     } catch (error) {
       console.error('Login error:', error);
-      if (error.response && error.response.status === 401) {
-        // Allow login even on 401 error
-        const authData = {
-          ...authDetails,
-          email: formData.username,
-          lastLogin: new Date().toISOString(),
-          sessionExpiry: new Date(Date.now() + 60 * 60 * 1000).toISOString()
-        };
-        CookiesHandler.set('authDetails', JSON.stringify(authData), 1/24);
-        CookiesHandler.set('isLoggedIn', 'true', 1/24);
-        
-        // Fetch products after login
-        try {
-          const productsResponse = await axios.get('http://localhost:5000/api/products');
-          console.log('Products API Response:', productsResponse);
-        } catch (productsError) {
-          console.error('Products fetch error:', productsError);
-        }
-        
-        onLogin();
-      } else if (error.response) {
-        alert(error.response.data.message || 'Login failed!');
+      if (error.response) {
+        toast.error(error.response.data.message || 'Invalid credentials!', { position: 'top-left' });
       } else if (error.request) {
-        alert('Server not responding. Please try again later.');
+        toast.error('Server not responding. Please try again later.', { position: 'top-left' });
       } else {
-        alert('An error occurred. Please try again.');
+        toast.error('An error occurred. Please try again.', { position: 'top-left' });
       }
     } finally {
       setIsLoading(false);

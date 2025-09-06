@@ -13,18 +13,14 @@ export default function Products() {
   const [searchTerm, setSearchTerm] = useState('');
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState({});
 
   const fetchProducts = async () => {
     setLoading(true);
     try {
       const response = await axios.get('http://localhost:5000/api/products');
-      console.log('Products API Response:', response);
-      console.log('Products Data:', response.data);
       setProducts(response.data || []);
     } catch (error) {
-      console.error('Products API Error:', error);
-      console.log('Error Response:', error.response);
-      // Fallback to dummy data if API fails
       setProducts(dummyProducts);
     } finally {
       setLoading(false);
@@ -44,7 +40,7 @@ export default function Products() {
       price: 850,
       stock: 45,
       status: 'in-stock',
-      image: '/images/logo1.png',
+      images: ['/images/logo1.png', '/images/logo.png'],
       description: 'High quality basmati rice from Punjab',
       supplier: 'Punjab Grains Ltd.'
     },
@@ -56,7 +52,7 @@ export default function Products() {
       price: 320,
       stock: 12,
       status: 'low-stock',
-      image: '/images/logo1.png',
+      images: ['/images/logo1.png', '/images/logo.png'],
       description: 'Organic whole wheat flour',
       supplier: 'Organic Foods Co.'
     },
@@ -68,7 +64,7 @@ export default function Products() {
       price: 180,
       stock: 78,
       status: 'in-stock',
-      image: '/images/logo1.png',
+      images: ['/images/logo1.png', '/images/logo.png'],
       description: 'Pure sunflower cooking oil 1L',
       supplier: 'Golden Oil Mills'
     },
@@ -80,7 +76,7 @@ export default function Products() {
       price: 45,
       stock: 0,
       status: 'out-of-stock',
-      image: '/images/logo1.png',
+      images: ['/images/logo1.png', '/images/logo.png'],
       description: 'Pure refined white sugar 1kg',
       supplier: 'Sweet Industries'
     },
@@ -92,7 +88,7 @@ export default function Products() {
       price: 120,
       stock: 89,
       status: 'in-stock',
-      image: '/images/logo1.png',
+      images: ['/images/logo1.png', '/images/logo.png'],
       description: 'Premium quality toor dal',
       supplier: 'Dal Traders'
     },
@@ -104,7 +100,7 @@ export default function Products() {
       price: 95,
       stock: 23,
       status: 'low-stock',
-      image: '/images/logo1.png',
+      images: ['/images/logo1.png', '/images/logo.png'],
       description: 'Natural Himalayan pink salt',
       supplier: 'Mountain Salt Co.'
     }
@@ -116,6 +112,28 @@ export default function Products() {
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     product.sku.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handlePrevImage = (productId, e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    const product = filteredProducts.find(p => p.id === productId);
+    if (!product?.images?.length) return;
+
+    const currentIndex = currentImageIndex[productId] || 0;
+    const newIndex = currentIndex === 0 ? product.images.length - 1 : currentIndex - 1;
+    setCurrentImageIndex(prev => ({ ...prev, [productId]: newIndex }));
+  };
+
+  const handleNextImage = (productId, e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    const product = filteredProducts.find(p => p.id === productId);
+    if (!product?.images?.length) return;
+
+    const currentIndex = currentImageIndex[productId] || 0;
+    const newIndex = (currentIndex + 1) % product.images.length;
+    setCurrentImageIndex(prev => ({ ...prev, [productId]: newIndex }));
+  };
 
   return (
     <div className="products">
@@ -150,7 +168,7 @@ export default function Products() {
           gap: '12px',
           alignItems: 'center'
         }}>
-          <button 
+          <button
             style={{
               padding: '12px 24px',
               border: '2px solid #e2e8f0',
@@ -162,20 +180,10 @@ export default function Products() {
               transition: 'all 0.3s ease',
               fontSize: '14px'
             }}
-            onClick={fetchProducts} 
+            onClick={fetchProducts}
             disabled={loading}
-            onMouseEnter={(e) => {
-              if (!loading) {
-                e.target.style.background = '#e2e8f0';
-                e.target.style.transform = 'translateY(-1px)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.background = '#f1f5f9';
-              e.target.style.transform = 'translateY(0)';
-            }}
           >{loading ? 'Loading...' : 'Refresh'}</button>
-          <button 
+          <button
             style={{
               padding: '12px 24px',
               border: 'none',
@@ -190,14 +198,6 @@ export default function Products() {
               display: 'flex',
               alignItems: 'center',
               gap: '8px'
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.transform = 'translateY(-2px)';
-              e.target.style.boxShadow = '0 8px 25px rgba(59, 130, 246, 0.4)';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.transform = 'translateY(0)';
-              e.target.style.boxShadow = '0 4px 15px rgba(59, 130, 246, 0.3)';
             }}
           >
             <MdAdd size={20} />
@@ -221,7 +221,7 @@ export default function Products() {
             <FaWarehouse size={20} color="#10b981" />
           </div>
           <div className="stat-info">
-            <span className="stat-value">{products.filter(p => p.status === 'in-stock').length}</span>
+            <span className="stat-value">{products?.length}</span>
             <span className="stat-label">In Stock</span>
           </div>
         </div>
@@ -230,7 +230,7 @@ export default function Products() {
             <FaTag size={20} color="#f59e0b" />
           </div>
           <div className="stat-info">
-            <span className="stat-value">{products.filter(p => p.status === 'low-stock').length}</span>
+            <span className="stat-value">{products.filter(p => p.stock <= 5).length}</span>
             <span className="stat-label">Low Stock</span>
           </div>
         </div>
@@ -244,23 +244,23 @@ export default function Products() {
           </div>
         </div>
       </div>
-      
+
       <div className="products-controls">
         <div className="search-section">
-          <Input 
-            type="text" 
-            placeholder="Search products by name or SKU..." 
+          <Input
+            type="text"
+            placeholder="Search products by name or SKU..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <Dropdown 
+          <Dropdown
             placeholder="All Categories"
             options={categories.slice(1)}
           />
         </div>
-        
+
         <div className="view-controls">
-          <button 
+          <button
             className={`view-btn ${viewMode === 'grid' ? 'active' : ''}`}
             onClick={() => setViewMode('grid')}
             style={{
@@ -278,25 +278,11 @@ export default function Products() {
               fontSize: '14px',
               boxShadow: viewMode === 'grid' ? '0 4px 15px rgba(59, 130, 246, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.05)'
             }}
-            onMouseEnter={(e) => {
-              if (viewMode !== 'grid') {
-                e.target.style.background = '#f8fafc';
-                e.target.style.borderColor = '#cbd5e1';
-                e.target.style.transform = 'translateY(-1px)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (viewMode !== 'grid') {
-                e.target.style.background = 'white';
-                e.target.style.borderColor = '#e2e8f0';
-                e.target.style.transform = 'translateY(0)';
-              }
-            }}
           >
             <MdViewModule size={18} />
             <span>Grid</span>
           </button>
-          <button 
+          <button
             className={`view-btn ${viewMode === 'list' ? 'active' : ''}`}
             onClick={() => setViewMode('list')}
             style={{
@@ -314,27 +300,13 @@ export default function Products() {
               fontSize: '14px',
               boxShadow: viewMode === 'list' ? '0 4px 15px rgba(59, 130, 246, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.05)'
             }}
-            onMouseEnter={(e) => {
-              if (viewMode !== 'list') {
-                e.target.style.background = '#f8fafc';
-                e.target.style.borderColor = '#cbd5e1';
-                e.target.style.transform = 'translateY(-1px)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (viewMode !== 'list') {
-                e.target.style.background = 'white';
-                e.target.style.borderColor = '#e2e8f0';
-                e.target.style.transform = 'translateY(0)';
-              }
-            }}
           >
             <MdViewList size={18} />
             <span>List</span>
           </button>
         </div>
       </div>
-      
+
       {viewMode === 'grid' ? (
         <div style={{
           display: 'grid',
@@ -343,8 +315,8 @@ export default function Products() {
           marginTop: '24px'
         }}>
           {filteredProducts.map((product) => (
-            <div 
-              key={product.id} 
+            <div
+              key={product.id}
               style={{
                 background: 'white',
                 borderRadius: '16px',
@@ -353,14 +325,6 @@ export default function Products() {
                 overflow: 'hidden',
                 transition: 'all 0.3s ease',
                 cursor: 'pointer'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-8px)';
-                e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.15)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.08)';
               }}
             >
               <div style={{
@@ -371,24 +335,28 @@ export default function Products() {
                 alignItems: 'center',
                 justifyContent: 'center'
               }}>
-                <img 
-                  src={product.image} 
-                  alt={product.name} 
-                  style={{
-                    width: '120px',
-                    height: '120px',
-                    objectFit: 'cover',
-                    borderRadius: '12px',
-                    border: '2px solid white',
-                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
-                  }}
-                />
+                <div style={{
+                  position: 'absolute',
+                  top: '12px',
+                  left: '12px',
+                  padding: '6px 12px',
+                  borderRadius: '20px',
+                  fontSize: '12px',
+                  fontWeight: '600',
+                  background: product.stock === 0 ? '#fee2e2' : '#dcfce7',
+                  color: product.stock === 0 ? '#dc2626' : '#166534',
+                  zIndex: 10
+                }}>
+                  {product.stock === 0 ? 'Out of Stock' : 'In Stock'}
+                </div>
+
                 <div style={{
                   position: 'absolute',
                   top: '12px',
                   right: '12px',
                   display: 'flex',
-                  gap: '8px'
+                  gap: '8px',
+                  zIndex: 10
                 }}>
                   <button style={{
                     width: '36px',
@@ -423,19 +391,66 @@ export default function Products() {
                     <MdDelete size={16} />
                   </button>
                 </div>
-                <div style={{
-                  position: 'absolute',
-                  top: '12px',
-                  left: '12px',
-                  padding: '6px 12px',
-                  borderRadius: '20px',
-                  fontSize: '12px',
-                  fontWeight: '600',
-                  background: product.stock === 0 ? '#fee2e2' : '#dcfce7',
-                  color: product.stock === 0 ? '#dc2626' : '#166534'
-                }}>
-                  {product.stock === 0 ? 'Out of Stock' : 'In Stock'}
-                </div>
+
+                <img
+                  src={`http://localhost:5000/${product.images?.[currentImageIndex[product.id] || 0] || product.images?.[0] || '/images/logo1.png'}`}
+                  alt={product.name}
+                  style={{
+                    width: '120px',
+                    height: '120px',
+                    objectFit: 'cover',
+                    borderRadius: '12px',
+                    border: '2px solid white',
+                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)',
+                    zIndex: 1
+                  }}
+                />
+                {product.images && product.images.length > 1 && (
+                  <>
+                    <button
+                      onClick={(e) => handlePrevImage(product.id, e)}
+                      style={{
+                        position: 'absolute',
+                        left: '8px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        width: '30px',
+                        height: '30px',
+                        borderRadius: '50%',
+                        border: 'none',
+                        background: 'rgba(255, 255, 255, 0.9)',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '16px',
+                        color: '#64748b',
+                        zIndex: 5
+                      }}
+                    >‹</button>
+                    <button
+                      onClick={(e) => handleNextImage(product.id, e)}
+                      style={{
+                        position: 'absolute',
+                        right: '8px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        width: '30px',
+                        height: '30px',
+                        borderRadius: '50%',
+                        border: 'none',
+                        background: 'rgba(255, 255, 255, 0.9)',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '16px',
+                        color: '#64748b',
+                        zIndex: 5
+                      }}
+                    >›</button>
+                  </>
+                )}
               </div>
               <div style={{
                 padding: '20px'
@@ -492,19 +507,19 @@ export default function Products() {
           ))}
         </div>
       ) : (
-        <div style={{marginTop: '24px'}}>
-          <Table 
+        <div style={{ marginTop: '24px' }}>
+          <Table
             data={filteredProducts}
             columns={[
-              { 
-                key: 'product', 
-                header: 'Product', 
+              {
+                key: 'product',
+                header: 'Product',
                 render: (row) => (
-                  <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
-                    <img src={row.image} alt={row.name} style={{width: '40px', height: '40px', borderRadius: '8px'}} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <img src={row.images?.[0] || '/images/logo1.png'} alt={row.name} style={{ width: '40px', height: '40px', borderRadius: '8px' }} />
                     <div>
-                      <div style={{fontWeight: '600'}}>{row.name}</div>
-                      <div style={{fontSize: '12px', color: '#64748b'}}>SKU: {row.sku}</div>
+                      <div style={{ fontWeight: '600' }}>{row.name}</div>
+                      <div style={{ fontSize: '12px', color: '#64748b' }}>SKU: {row.sku}</div>
                     </div>
                   </div>
                 )
@@ -512,20 +527,20 @@ export default function Products() {
               { key: 'category', header: 'Category' },
               { key: 'price', header: 'Price', render: (row) => `₹${row.price}` },
               { key: 'stock', header: 'Stock', render: (row) => `${row.stock} units` },
-              { 
-                key: 'status', 
-                header: 'Status', 
+              {
+                key: 'status',
+                header: 'Status',
                 render: (row) => (
                   <span className={`status ${row.stock === 0 ? 'out-of-stock' : 'in-stock'}`}>
                     {row.stock === 0 ? 'Out of Stock' : 'In Stock'}
                   </span>
                 )
               },
-              { 
-                key: 'actions', 
+              {
+                key: 'actions',
                 header: 'Actions',
                 render: (row) => (
-                  <ActionButtons 
+                  <ActionButtons
                     onEdit={() => console.log('Edit product:', row.id)}
                     onDelete={() => console.log('Delete product:', row.id)}
                   />

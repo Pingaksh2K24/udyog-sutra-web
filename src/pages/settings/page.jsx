@@ -1,6 +1,7 @@
 import './style.css';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import Database from '../../database/index.js';
+import toast from 'react-hot-toast';
 
 export default function Settings() {
   const [settings, setSettings] = useState(null);
@@ -32,13 +33,22 @@ export default function Settings() {
 
   const fetchSettings = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/settings');
-      console.log('Settings API Response:', response.data);
-      const apiData = response.data[0]; // API returns array with single object
-      setSettings(apiData);
-      setFormData(apiData);
+      // Get settings from database (already stored from login)
+      const cachedSettings = Database.settings.settings;
+      if (cachedSettings) {
+        console.log('Using cached settings:', cachedSettings);
+        setSettings(cachedSettings);
+        setFormData(cachedSettings);
+      } else {
+        // Fallback: fetch from API if not cached
+        const userId = 'USR0001'; // Get from cookies or context
+        const response = await Database.settings.getAll(userId);
+        console.log('Settings from API:', response);
+        setSettings(response.settings);
+        setFormData(response.settings);
+      }
     } catch (error) {
-      console.error('Settings API Error:', error);
+      console.error('Settings fetch error:', error);
       // Fallback to default settings
       setSettings(getDefaultSettings());
     } finally {
@@ -49,7 +59,7 @@ export default function Settings() {
   const saveSettings = async () => {
     setSaving(true);
     try {
-      const userId = settings.user_id;
+      const userId = settings.user_id || 'USR0001';
       
       // Clean data - remove system fields that shouldn't be updated
       const cleanData = {
@@ -64,14 +74,13 @@ export default function Settings() {
       };
       
       console.log('Saving settings clean data:', cleanData);
-      const response = await axios.put(`http://localhost:5000/api/settings/${userId}`, cleanData);
-      console.log('Settings updated:', response.data);
-      alert('Settings saved successfully!');
+      const response = await Database.settings.update(userId, cleanData);
+      console.log('Settings updated:', response);
+      toast.success('Settings saved successfully!', { position: 'top-left' });
       setSettings(formData);
     } catch (error) {
       console.error('Error saving settings:', error);
-      console.error('Error response:', error.response?.data);
-      alert(error.response?.data?.message || 'Failed to save settings');
+      toast.error('Failed to save settings', { position: 'top-left' });
     } finally {
       setSaving(false);
     }

@@ -133,6 +133,25 @@
   align-items: center;
 }
 
+.product-dropdown {
+  width: 100%;
+}
+
+.table-row .dropdown-with-search .dropdown-trigger {
+  padding: 8px 12px;
+  font-size: 14px;
+  min-height: 40px;
+}
+
+.table-row .dropdown-with-search .dropdown-menu {
+  z-index: 9999;
+  position: absolute;
+}
+
+.table-row .dropdown-with-search {
+  position: relative;
+}
+
 .table-row input {
   padding: 8px 12px;
   border: 1px solid #d1d5db;

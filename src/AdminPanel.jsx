@@ -1,4 +1,7 @@
 import { useState, useEffect } from 'react';
+import { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
+import axios from 'axios';
 import Sidebar from './components/sidebar/sidebar';
 import Header from './components/header/page';
 import Login from './pages/login/page';
@@ -12,6 +15,8 @@ import EditSupplier from './pages/suppliers/edit/page';
 import Reports from './pages/reports/page';
 import Settings from './pages/settings/page';
 import NewSalePage from './pages/sales/page';
+import CreateUser from './pages/users/CreateUser';
+import UserList from './pages/users/UserList';
 import CookiesHandler from './utils/CookiesHandler';
 import DatabaseService from './utils/DatabaseService';
 import ComprehensiveDataSeeder from './utils/ComprehensiveDataSeeder';
@@ -67,22 +72,51 @@ export default function AdminPanel() {
       } else {
         // Session expired, logout
         handleLogout();
-        alert('Session expired. Please login again.');
+        toast.error('Session expired. Please login again.');
       }
     } else {
       setIsLoggedIn(false);
     }
   };
 
-  const handleLogout = () => {
-    CookiesHandler.remove('authDetails');
-    CookiesHandler.remove('isLoggedIn');
-    setIsLoggedIn(false);
+  const handleLogout = async () => {
+    try {
+      // Get token for logout API call
+      const token = CookiesHandler.get('userToken');
+      
+      // Call logout API
+      await axios.post('http://localhost:5000/api/auth/logout', {}, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      toast.success('Logged out successfully!');
+    } catch (error) {
+      console.error('Logout API error:', error);
+      // Still proceed with logout even if API fails
+      toast.success('Logged out successfully!');
+    } finally {
+      // Clear all session data
+      CookiesHandler.remove('authDetails');
+      CookiesHandler.remove('isLoggedIn');
+      CookiesHandler.remove('userToken');
+      CookiesHandler.remove('userId');
+      CookiesHandler.remove('userRole');
+      
+      // Clear any other session storage
+      sessionStorage.clear();
+      
+      setIsLoggedIn(false);
+    }
   };
 
   const renderContent = () => {
     switch(activeTab) {
       case 'dashboard': return <Dashboard />;
+      case 'user-list': return <UserList />;
+      case 'create-user': return <CreateUser />;
       case 'products': return <Products />;
       case 'inventory': return <Inventory />;
       case 'orders': return <Orders />;
@@ -97,11 +131,59 @@ export default function AdminPanel() {
   };
 
   if (!isLoggedIn) {
-    return <Login onLogin={() => setIsLoggedIn(true)} />;
+    return (
+      <>
+        <Toaster
+          position="top-left"
+          toastOptions={{
+            duration: 2000,
+            style: {
+              background: '#10b981',
+              color: 'white',
+              fontWeight: '600'
+            },
+            success: {
+              iconTheme: {
+                primary: 'white',
+                secondary: '#10b981'
+              }
+            }
+          }}
+        />
+        <Login onLogin={() => setIsLoggedIn(true)} />
+      </>
+    );
   }
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#f8fafc', fontFamily: 'system-ui, sans-serif' }}>
+      <Toaster
+        position="top-left"
+        toastOptions={{
+          duration: 2000,
+          style: {
+            background: '#10b981',
+            color: 'white',
+            fontWeight: '600'
+          },
+          success: {
+            iconTheme: {
+              primary: 'white',
+              secondary: '#10b981'
+            }
+          },
+          error: {
+            style: {
+              background: '#ef4444'
+            },
+            iconTheme: {
+              primary: 'white',
+              secondary: '#ef4444'
+            }
+          }
+        }}
+      />
+      
       <Sidebar 
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 

@@ -243,6 +243,10 @@ export default function Reports() {
                 <span className="action-text">Email Reports</span>
               </button>
               <button className="quick-action-btn">
+                <span className="action-icon">🏭</span>
+                <span className="action-text">Suppliers Reports</span>
+              </button>
+              <button className="quick-action-btn">
                 <span className="action-icon">⚙️</span>
                 <span className="action-text">Report Settings</span>
               </button>

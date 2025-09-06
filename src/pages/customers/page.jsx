@@ -78,7 +78,7 @@ export default function Customers() {
           gap: '12px',
           alignItems: 'center'
         }}>
-          <button 
+          <button
             style={{
               padding: '12px 24px',
               border: '2px solid #e2e8f0',
@@ -90,7 +90,7 @@ export default function Customers() {
               transition: 'all 0.3s ease',
               fontSize: '14px'
             }}
-            onClick={fetchCustomers} 
+            onClick={fetchCustomers}
             disabled={loading}
             onMouseEnter={(e) => {
               if (!loading) {
@@ -103,7 +103,7 @@ export default function Customers() {
               e.target.style.transform = 'translateY(0)';
             }}
           >{loading ? 'Loading...' : 'Refresh'}</button>
-          <button 
+          <button
             style={{
               padding: '12px 24px',
               border: 'none',
@@ -135,8 +135,8 @@ export default function Customers() {
         marginBottom: '32px'
       }}>
         {stats.map((stat, index) => (
-          <div 
-            key={index} 
+          <div
+            key={index}
             style={{
               background: 'white',
               borderRadius: '16px',
@@ -239,40 +239,46 @@ export default function Customers() {
 
       <div className="customers-filters">
         <div className="filter-group">
-          <Dropdown 
+          <Dropdown
             placeholder="All Types"
             options={['Retailer', 'Wholesaler', 'Distributor']}
             className="filter-dropdown"
           />
-          <Dropdown 
+          <Dropdown
             placeholder="All Status"
             options={['Active', 'Inactive']}
             className="filter-dropdown"
           />
-          <Input 
-            type="text" 
+          <Input
+            type="text"
             placeholder="Search customers..."
           />
         </div>
       </div>
 
-      <div style={{marginTop: '24px'}}>
-        <Table 
+      <div style={{ marginTop: '24px' }}>
+        <Table
           data={customers}
           columns={[
             { key: 'customerId', header: 'Customer ID', render: (row) => `CUST${row.customerId?.toString().padStart(3, '0') || ''}` },
             { key: 'name', header: 'Name' },
-            { key: 'email', header: 'Email' },
             { key: 'phone', header: 'Phone' },
-            { key: 'type', header: 'Type' },
-            { key: 'orders', header: 'Orders' },
-            { key: 'totalAmount', header: 'Total Spent', render: (row) => `₹${row.totalAmount?.toLocaleString() || '0'}` },
+            { key: 'orders', header: 'Orders', render: (row) => row?.orders?.length || 0 },
+            { key: 'outstandingAmount', header: 'Outstanding' },
+            {
+              key: 'totalAmount', header: 'Total Spent', render: (row) => {
+                const total = Array.isArray(row.orders)
+                  ? row.orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0)
+                  : 0;
+                return `₹${total.toLocaleString()}`;
+              }
+            },
             { key: 'status', header: 'Status', render: (row) => <span className={`status ${row.status?.toLowerCase()}`}>{row.status}</span> },
-            { 
-              key: 'actions', 
+            {
+              key: 'actions',
               header: 'Actions',
               render: (row) => (
-                <ActionButtons 
+                <ActionButtons
                   onEdit={() => console.log('Edit customer:', row.customerId || row.id)}
                   onDelete={() => console.log('Delete customer:', row.customerId || row.id)}
                 />

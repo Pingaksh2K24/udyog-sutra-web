@@ -1,6 +1,7 @@
 import './style.css';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { FaShoppingCart, FaClock, FaCheckCircle, FaRupeeSign } from 'react-icons/fa';
 import Table from '../../components/table/Table';
 import ActionButtons from '../../components/action/ActionButtons';
 import Dropdown from '../../components/dropdown/Dropdown';
@@ -41,10 +42,10 @@ export default function Orders() {
   ];
 
   const stats = [
-    { title: 'Total Orders', value: '156', color: '#3b82f6' },
-    { title: 'Pending Orders', value: '23', color: '#f59e0b' },
-    { title: 'Completed Today', value: '12', color: '#10b981' },
-    { title: 'Revenue Today', value: '₹45,670', color: '#8b5cf6' }
+    { title: 'Total Orders', value: '156', color: '#3b82f6', icon: FaShoppingCart },
+    { title: 'Pending Orders', value: '23', color: '#f59e0b', icon: FaClock },
+    { title: 'Completed Today', value: '12', color: '#10b981', icon: FaCheckCircle },
+    { title: 'Revenue Today', value: '₹45,670', color: '#8b5cf6', icon: FaRupeeSign }
   ];
 
   return (
@@ -187,9 +188,10 @@ export default function Orders() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: `0 8px 25px ${stat.color}30`,
-                fontSize: '28px'
-              }}>🛒</div>
+                boxShadow: `0 8px 25px ${stat.color}30`
+              }}>
+                <stat.icon size={28} color="white" />
+              </div>
               <div style={{
                 display: 'flex',
                 alignItems: 'center',

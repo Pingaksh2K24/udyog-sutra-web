@@ -310,8 +310,8 @@ export default function Products() {
       {viewMode === 'grid' ? (
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-          gap: '24px',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+          gap: '20px',
           marginTop: '24px'
         }}>
           {filteredProducts.map((product) => (

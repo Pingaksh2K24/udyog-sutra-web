@@ -4,7 +4,7 @@ import {
   MdSearch, MdFilterList, MdLocationOn, MdUpdate, MdVisibility, MdBarChart,
   MdNotifications, MdHistory, MdSettings
 } from 'react-icons/md';
-import { FaBoxes, FaWarehouse, FaExclamationTriangle, FaChartLine } from 'react-icons/fa';
+import { FaBoxes, FaWarehouse, FaExclamationTriangle, FaChartLine, FaExclamationCircle, FaArrowDown, FaRupeeSign } from 'react-icons/fa';
 import { useState } from 'react';
 
 export default function Inventory() {
@@ -111,21 +111,21 @@ export default function Inventory() {
       title: 'Low Stock Items', 
       value: inventoryData.filter(item => item.status === 'Low Stock' || item.status === 'Critical').length.toString(), 
       color: '#f59e0b',
-      icon: MdWarning,
+      icon: FaExclamationCircle,
       change: '2 need attention'
     },
     { 
       title: 'Out of Stock', 
       value: inventoryData.filter(item => item.status === 'Out of Stock').length.toString(), 
       color: '#ef4444',
-      icon: MdTrendingDown,
+      icon: FaArrowDown,
       change: 'Immediate action required'
     },
     { 
       title: 'Total Value', 
       value: `₹${inventoryData.reduce((sum, item) => sum + item.totalValue, 0).toLocaleString()}`, 
       color: '#10b981',
-      icon: MdAttachMoney,
+      icon: FaRupeeSign,
       change: '+12% from last month'
     }
   ];

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import './style.css';
-import { FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaUser, FaLock, FaEye, FaEyeSlash, FaChartBar, FaBoxes, FaUsers } from 'react-icons/fa';
 import { setAuthProps } from '../../utils/AuthenticationLibrary';
 import CookiesHandler from '../../utils/CookiesHandler';
 import axios from 'axios';
@@ -68,6 +68,22 @@ export default function Login({ onLogin }) {
         CookiesHandler.set('userId', response.data.user?.user_id || response.data.user?.id || '', 8/24);
         CookiesHandler.set('userRole', response.data.user?.role || 'user', 8/24);
         
+        // Save additional user details to localStorage
+        const userDetails = {
+          businessName: response.data.user?.businessName || '',
+          user_id: response.data.user?.user_id || response.data.user?.id || '',
+          status: response.data.user?.status || 'active',
+          role: response.data.user?.role || 'user',
+          fullName: response.data.user?.fullName || response.data.user?.name || '',
+          email: response.data.user?.email || '',
+          phone: response.data.user?.phone || '',
+          createdAt: response.data.user?.createdAt || '',
+          lastLogin: new Date().toISOString()
+        };
+        localStorage.setItem('userDetails', JSON.stringify(userDetails));
+        localStorage.setItem('userStatus', userDetails.status);
+        localStorage.setItem('userRole', userDetails.role);
+        
         // Call settings API after successful login
         try {
           const settingsResponse = await axios.get(`http://localhost:5000/api/settings/${response.data.user?.user_id}`, {
@@ -126,65 +142,118 @@ export default function Login({ onLogin }) {
 
   return (
     <div className="login-container">
-      <div className="login-card">
-        <div className="login-header">
-          <div className="logo-container">
-            <img src="/images/logo1.png" alt="Udyog Sutra" className="login-logo" />
-            <h1 className="login-title">Udyog</h1>
+      <div className="login-background">
+        <div className="bg-pattern"></div>
+        <div className="bg-gradient"></div>
+      </div>
+      
+      <div className="login-content">
+        <div className="login-info">
+          <div className="info-content">
+            <h3>Simplifying Business, Amplifying Growth</h3>
+            <p>Manage inventory, track sales, handle customers, and generate reports all in one place.</p>
+            <div className="features-list">
+              <div className="feature-item">
+                <FaChartBar className="feature-icon" />
+                <span>Real-time Analytics</span>
+              </div>
+              <div className="feature-item">
+                <FaBoxes className="feature-icon" />
+                <span>Inventory Management</span>
+              </div>
+              <div className="feature-item">
+                <FaUsers className="feature-icon" />
+                <span>Customer Relations</span>
+              </div>
+            </div>
           </div>
-          <p className="login-subtitle">Login</p>
         </div>
-
-        <form onSubmit={handleSubmit} className="login-form">
-          <div className="form-group">
-            <label className="form-label">Email</label>
-            <div className="input-container">
-              <FaUser className="input-icon" />
-              <input
-                type="email"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                className="form-input"
-                placeholder="admin@gmail.com"
-                required
-              />
+        
+        <div className="login-card">
+          <div className="login-header">
+            <div className="logo-container">
+              <div className="logo-wrapper">
+                <img src="/images/logo1.png" alt="Udyog Sutra" className="login-logo" />
+              </div>
+              <div className="brand-info">
+                <h1 className="login-title">Udyog Sutra</h1>
+                <p className="brand-tagline">Business Management System</p>
+              </div>
+            </div>
+            <div className="welcome-text">
+              <h2 className="welcome-title">Welcome Back!</h2>
+              <p className="welcome-subtitle">Sign in to access your dashboard</p>
             </div>
           </div>
 
-          <div className="form-group">
-            <label className="form-label">Password</label>
-            <div className="input-container">
-              <FaLock className="input-icon" />
-              <input
-                type={showPassword ? 'text' : 'password'}
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                className="form-input"
-                placeholder="Enter your password"
-                required
-              />
-              <button
-                type="button"
-                className="password-toggle"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <FaEyeSlash /> : <FaEye />}
-              </button>
+          <form onSubmit={handleSubmit} className="login-form">
+            <div className="form-group">
+              <label className="form-label">Email Address</label>
+              <div className="input-container">
+                <FaUser className="input-icon" />
+                <input
+                  type="email"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  className="form-input"
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
             </div>
+
+            <div className="form-group">
+              <label className="form-label">Password</label>
+              <div className="input-container">
+                <FaLock className="input-icon" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="form-input"
+                  placeholder="Enter your password"
+                  required
+                />
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </div>
+            </div>
+            
+            <div className="form-options">
+              <label className="remember-me">
+                <input type="checkbox" />
+                <span className="checkmark"></span>
+                Remember me
+              </label>
+              <a href="#" className="forgot-password">Forgot Password?</a>
+            </div>
+            
+            <button type="submit" className="login-button" disabled={isLoading}>
+              {isLoading ? (
+                <div className="loading-spinner"></div>
+              ) : (
+                'Sign In to Dashboard'
+              )}
+            </button>
+          </form>
+          
+          <div className="login-footer">
+            <div className="footer-links">
+              <a href="#">Privacy Policy</a>
+              <span>•</span>
+              <a href="#">Terms of Service</a>
+              <span>•</span>
+              <a href="#">Support</a>
+            </div>
+            <p className="footer-text">© 2025 Udyog Sutra. Made with ❤️ for Indian businesses</p>
           </div>
-          <button type="submit" className="login-button" disabled={isLoading}>
-            {isLoading ? (
-              <div className="loading-spinner"></div>
-            ) : (
-              'Login to Dashboard'
-            )}
-          </button>
-        </form>
-        <div className="login-footer">
-          <p className="footer-text">© 2025 Udyog. All rights reserved.</p>
-          <p className="footer-text">Made with ❤️ for Indian businesses</p>
         </div>
       </div>
     </div>

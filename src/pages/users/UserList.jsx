@@ -82,6 +82,7 @@ export default function UserList() {
     {
       key: 'user',
       header: 'User Details',
+      width: '2fr',
       render: (row) => (
         <div>
           <div style={{ fontWeight: '600', fontSize: '14px' }}>{row.fullName}</div>
@@ -95,14 +96,26 @@ export default function UserList() {
       header: 'Role',
       render: (row) => (
         <span style={{
-          padding: '4px 8px',
-          borderRadius: '12px',
+          padding: '6px 12px',
+          borderRadius: '16px',
           fontSize: '12px',
-          fontWeight: '600',
-          background: row.role === 'admin' ? '#dbeafe' : row.role === 'retailer' ? '#dcfce7' : '#fef3c7',
-          color: row.role === 'admin' ? '#1e40af' : row.role === 'retailer' ? '#166534' : '#92400e'
+          fontWeight: '700',
+          background: row.role === 'admin' 
+            ? 'linear-gradient(135deg, #3b82f6, #1d4ed8)' 
+            : row.role === 'retailer' 
+            ? 'linear-gradient(135deg, #10b981, #059669)' 
+            : 'linear-gradient(135deg, #f59e0b, #d97706)',
+          color: 'white',
+          boxShadow: row.role === 'admin' 
+            ? '0 4px 12px rgba(59, 130, 246, 0.3)' 
+            : row.role === 'retailer' 
+            ? '0 4px 12px rgba(16, 185, 129, 0.3)' 
+            : '0 4px 12px rgba(245, 158, 11, 0.3)',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          textTransform: 'capitalize',
+          letterSpacing: '0.5px'
         }}>
-          {row.role}
+          {row.role?.charAt(0).toUpperCase() + row.role?.slice(1)}
         </span>
       )
     },
@@ -116,14 +129,22 @@ export default function UserList() {
       header: 'Status',
       render: (row) => (
         <span style={{
-          padding: '4px 8px',
-          borderRadius: '12px',
+          padding: '6px 12px',
+          borderRadius: '16px',
           fontSize: '12px',
-          fontWeight: '600',
-          background: row.status === 'active' ? '#dcfce7' : '#fee2e2',
-          color: row.status === 'active' ? '#166534' : '#dc2626'
+          fontWeight: '700',
+          background: row.status === 'active' 
+            ? 'linear-gradient(135deg, #10b981, #059669)' 
+            : 'linear-gradient(135deg, #ef4444, #dc2626)',
+          color: 'white',
+          boxShadow: row.status === 'active' 
+            ? '0 4px 12px rgba(16, 185, 129, 0.3)' 
+            : '0 4px 12px rgba(239, 68, 68, 0.3)',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          textTransform: 'capitalize',
+          letterSpacing: '0.5px'
         }}>
-          {row.status}
+          {row.status?.charAt(0).toUpperCase() + row.status?.slice(1)}
         </span>
       )
     },

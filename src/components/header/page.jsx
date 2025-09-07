@@ -17,7 +17,7 @@ export default function Header({ onLogout }) {
       <div className="header-content">
         <div className="header-left">
           <h1 className="header-title">
-            Welcome, {Database.settings.getBusinessName() || 'Admin'}!
+            Welcome, {Database.settings.getBusinessName() || 'Admin'}
           </h1>
           <p className="header-subtitle">
             Manage your retail and wholesale business efficiently

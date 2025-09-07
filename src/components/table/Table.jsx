@@ -20,7 +20,7 @@ export default function Table({
     }
   };
 
-  const gridColumns = `repeat(${columns.length}, 1fr)`;
+  const gridColumns = columns.map(col => col.width || '1fr').join(' ');
 
   return (
     <div className="table-container">

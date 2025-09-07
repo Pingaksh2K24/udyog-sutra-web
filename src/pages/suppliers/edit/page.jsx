@@ -3,6 +3,7 @@ import axios from 'axios';
 import Router from '../../../utils/Router';
 import './style.css';
 import toast from 'react-hot-toast';
+import CookiesHandler from '../../../utils/CookiesHandler';
 
 export default function EditSupplier({ supplierId }) {
   const [supplier, setSupplier] = useState(null);
@@ -11,6 +12,36 @@ export default function EditSupplier({ supplierId }) {
   useEffect(() => {
     if (supplierId) {
       fetchSupplier();
+    } else {
+      // Initialize empty supplier for add mode
+      setSupplier({
+        name: '',
+        contactPerson: '',
+        email: '',
+        phone: [''],
+        status: 'active',
+        addresses: [{
+          type: 'business',
+          street: '',
+          city: '',
+          state: '',
+          country: 'India',
+          postalCode: ''
+        }],
+        gstNumber: '',
+        panNumber: '',
+        paymentTerms: '',
+        creditLimit: 0,
+        rating: 5,
+        bankDetails: {
+          bankName: '',
+          accountNumber: '',
+          ifscCode: '',
+          branch: ''
+        },
+        notes: ''
+      });
+      setLoading(false);
     }
   }, [supplierId]);
 
@@ -26,18 +57,32 @@ export default function EditSupplier({ supplierId }) {
     }
   };
 
-  const handleSubmit = async (e,id) => {
+  const handleSubmit = async (e, id) => {
     e.preventDefault();
     setLoading(true);
-    console.log('Selected supplier Id  data:', id);
+    
     try {
-      const response = await axios.put(`http://localhost:5000/api/suppliers/${id}`, supplier);
-      console.log('Supplier updated:', response.data);
-      toast.success('Supplier updated successfully!', { position: 'top-left' });
+      if (supplierId) {
+        // Edit mode
+        const response = await axios.put(`http://localhost:5000/api/suppliers/${id}`, supplier);
+        console.log('Supplier updated:', response.data);
+        toast.success('Supplier updated successfully!', { position: 'top-left' });
+      } else {
+        // Add mode - add user_id and createdBy from cookies
+        const userId = CookiesHandler.get('userId');
+        const supplierData = {
+          ...supplier,
+          user_id: userId,
+          createdBy: userId
+        };
+        const response = await axios.post('http://localhost:5000/api/suppliers/createNewSupplier', supplierData);
+        console.log('Supplier created:', response.data);
+        toast.success('Supplier created successfully!', { position: 'top-left' });
+      }
       Router.navigate('suppliers');
     } catch (error) {
-      console.error('Error updating supplier:', error);
-      toast.error(error.response?.data?.message || 'Failed to update supplier', { position: 'top-left' });
+      console.error('Error saving supplier:', error);
+      toast.error(error.response?.data?.message || 'Failed to save supplier', { position: 'top-left' });
     } finally {
       setLoading(false);
     }
@@ -79,7 +124,7 @@ export default function EditSupplier({ supplierId }) {
     <div className="edit-supplier">
       <div className="edit-container">
         <div className="edit-header">
-          <h2>Edit Supplier</h2>
+          <h2>{supplierId ? 'Edit Supplier' : 'Add New Supplier'}</h2>
           <button onClick={() => Router.navigate('suppliers')} className="back-btn">
             Back to Suppliers
           </button>
@@ -89,10 +134,12 @@ export default function EditSupplier({ supplierId }) {
         <div className="form-section">
           <h3>Basic Information</h3>
           <div className="form-grid">
-            <div className="form-group">
-              <label>Supplier ID</label>
-              <input type="text" value={supplier.supplierId} disabled />
-            </div>
+            {supplierId && (
+              <div className="form-group">
+                <label>Supplier ID</label>
+                <input type="text" value={supplier.supplierId} disabled />
+              </div>
+            )}
             <div className="form-group">
               <label>Name</label>
               <input 
@@ -300,7 +347,7 @@ export default function EditSupplier({ supplierId }) {
             Cancel
           </button>
           <button type="submit" className="save-btn" disabled={loading}>
-            {loading ? 'Saving...' : 'Save Changes'}
+            {loading ? 'Saving...' : (supplierId ? 'Save Changes' : 'Add Supplier')}
           </button>
         </div>
       </form>

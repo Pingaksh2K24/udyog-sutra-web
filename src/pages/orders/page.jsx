@@ -7,6 +7,7 @@ import ActionButtons from '../../components/action/ActionButtons';
 import Dropdown from '../../components/dropdown/Dropdown';
 import DatePicker from '../../components/datepicker/DatePicker';
 import Input from '../../components/input/Input';
+import { formatCurrency, formatDateToIndian, formatNumber } from '../../utils/CommonUtils';
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
@@ -42,10 +43,10 @@ export default function Orders() {
   ];
 
   const stats = [
-    { title: 'Total Orders', value: '156', color: '#3b82f6', icon: FaShoppingCart },
-    { title: 'Pending Orders', value: '23', color: '#f59e0b', icon: FaClock },
-    { title: 'Completed Today', value: '12', color: '#10b981', icon: FaCheckCircle },
-    { title: 'Revenue Today', value: '₹45,670', color: '#8b5cf6', icon: FaRupeeSign }
+    { title: 'Total Orders', value: formatNumber(156), color: '#3b82f6', icon: FaShoppingCart },
+    { title: 'Pending Orders', value: formatNumber(23), color: '#f59e0b', icon: FaClock },
+    { title: 'Completed Today', value: formatNumber(12), color: '#10b981', icon: FaCheckCircle },
+    { title: 'Revenue Today', value: formatCurrency(45670), color: '#8b5cf6', icon: FaRupeeSign }
   ];
 
   return (
@@ -260,20 +261,127 @@ export default function Orders() {
         <Table 
           data={orders}
           columns={[
-            { key: 'orderId', header: 'Order ID', render: (row) => `#${row.orderId || row.id}` },
-            { key: 'customerName', header: 'Customer' },
-            { key: 'items', header: 'Items', render: (row) => `${row.items?.length || 0} items` },
-            { key: 'totalAmount', header: 'Amount', render: (row) => `₹${row.totalAmount?.toLocaleString() || '0'}` },
-            { key: 'status', header: 'Status', render: (row) => <span className={`status ${row.status?.toLowerCase()}`}>{row.status}</span> },
-            { key: 'priority', header: 'Priority' },
-            { key: 'orderDate', header: 'Date' },
+            { 
+              key: 'orderId', 
+              header: 'Order ID', 
+              width: '1.2fr',
+              render: (row) => (
+                <span style={{ fontWeight: 'bold', color: '#3b82f6', fontSize: '13px' }}>
+                  #{row.orderId || row.id}
+                </span>
+              )
+            },
+            { 
+              key: 'customerName', 
+              header: 'Customer',
+              width: '2fr',
+              render: (row) => (
+                <span style={{ fontWeight: '600', color: '#1e293b' }}>
+                  {row.customerName || row.customer || 'N/A'}
+                </span>
+              )
+            },
+            { 
+              key: 'items', 
+              header: 'Items',
+              width: '1fr',
+              render: (row) => (
+                <span style={{ fontWeight: '600', color: '#059669' }}>
+                  {formatNumber(row.items?.length || row.items || 0)} items
+                </span>
+              )
+            },
+            { 
+              key: 'totalAmount', 
+              header: 'Amount',
+              width: '1.5fr',
+              render: (row) => (
+                <span style={{ fontWeight: '600', color: '#059669', fontSize: '14px' }}>
+                  {formatCurrency(row.totalAmount || row.amount || 0)}
+                </span>
+              )
+            },
+            { 
+              key: 'status', 
+              header: 'Status',
+              width: '1.2fr',
+              render: (row) => {
+                const statusColors = {
+                  'delivered': { bg: '#dcfce7', color: '#166534', border: '#bbf7d0' },
+                  'processing': { bg: '#dbeafe', color: '#1e40af', border: '#bfdbfe' },
+                  'pending': { bg: '#fef3c7', color: '#92400e', border: '#fde68a' },
+                  'shipped': { bg: '#e0e7ff', color: '#3730a3', border: '#c7d2fe' },
+                  'cancelled': { bg: '#fee2e2', color: '#dc2626', border: '#fecaca' }
+                };
+                const status = row.status?.toLowerCase() || 'pending';
+                const colors = statusColors[status] || statusColors.pending;
+                
+                return (
+                  <span style={{
+                    padding: '4px 8px',
+                    borderRadius: '12px',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    background: colors.bg,
+                    color: colors.color,
+                    border: `1px solid ${colors.border}`,
+                    textTransform: 'capitalize'
+                  }}>
+                    {row.status || 'Pending'}
+                  </span>
+                );
+              }
+            },
+            { 
+              key: 'priority', 
+              header: 'Priority',
+              width: '1fr',
+              render: (row) => {
+                const priorityColors = {
+                  'high': { bg: '#fee2e2', color: '#dc2626' },
+                  'medium': { bg: '#fef3c7', color: '#d97706' },
+                  'low': { bg: '#dcfce7', color: '#059669' }
+                };
+                const priority = row.priority?.toLowerCase() || 'medium';
+                const colors = priorityColors[priority] || priorityColors.medium;
+                
+                return (
+                  <span style={{
+                    padding: '2px 6px',
+                    borderRadius: '8px',
+                    fontSize: '11px',
+                    fontWeight: '600',
+                    background: colors.bg,
+                    color: colors.color,
+                    textTransform: 'capitalize'
+                  }}>
+                    {row.priority || 'Medium'}
+                  </span>
+                );
+              }
+            },
+            { 
+              key: 'orderDate', 
+              header: 'Date',
+              width: '1.2fr',
+              render: (row) => (
+                <span style={{ color: '#64748b', fontSize: '13px' }}>
+                  {formatDateToIndian(row.orderDate || row.date)}
+                </span>
+              )
+            },
             { 
               key: 'actions', 
               header: 'Actions',
+              width: '150px',
               render: (row) => (
                 <ActionButtons 
-                  onEdit={() => console.log('Edit order:', row.orderId || row.id)}
+                  onView={() => console.log('View order:', row.orderId || row.id)}
                   onDelete={() => console.log('Delete order:', row.orderId || row.id)}
+                  onPayment={() => console.log('Payment for order:', row.orderId || row.id)}
+                  showView={true}
+                  showPayment={true}
+                  showEdit={false}
                 />
               )
             }

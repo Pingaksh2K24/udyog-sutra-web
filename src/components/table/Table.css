@@ -2,7 +2,7 @@
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  overflow: visible;
 }
 
 .table {
@@ -52,7 +52,7 @@
   justify-content: flex-start;
   text-align: left;
   word-wrap: break-word;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .pagination {

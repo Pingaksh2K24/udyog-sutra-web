@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import Table from '../../components/table/Table';
 import Input from '../../components/input/Input';
 import ActionButtons from '../../components/action/ActionButtons';
+import Router from '../../utils/Router';
 
 export default function UserList() {
   const [users, setUsers] = useState([]);
@@ -194,7 +195,7 @@ export default function UserList() {
           </div>
         </div>
         <button
-          onClick={() => toast.success('Navigate to Create User')}
+          onClick={() => Router.navigate('create-user')}
           style={{
             padding: '12px 24px',
             border: 'none',

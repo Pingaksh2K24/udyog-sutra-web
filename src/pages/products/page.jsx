@@ -137,69 +137,18 @@ export default function Products() {
 
   return (
     <div className="products">
-      <div style={{
-        background: 'linear-gradient(135deg, #475569, #94a3b8)',
-        marginTop: '24px',
-        padding: '24px',
-        borderRadius: '16px',
-        marginBottom: '24px',
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        border: '1px solid #e2e8f0'
-      }}>
-        <div>
-          <h2 style={{
-            fontSize: '32px',
-            fontWeight: '800',
-            color: 'white',
-            margin: '0 0 8px 0'
-          }}>Product Management</h2>
-          <p style={{
-            color: 'rgba(255, 255, 255, 0.9)',
-            fontSize: '16px',
-            margin: 0,
-            fontWeight: '500'
-          }}>Manage your inventory and product catalog</p>
+      <div className="page-header">
+        <div className="page-header-content">
+          <h2>Product Management</h2>
+          <p>Manage your inventory and product catalog</p>
         </div>
-        <div style={{
-          display: 'flex',
-          gap: '12px',
-          alignItems: 'center'
-        }}>
+        <div className="page-header-actions">
           <button
-            style={{
-              padding: '12px 24px',
-              border: '2px solid #e2e8f0',
-              borderRadius: '12px',
-              background: '#f1f5f9',
-              color: '#475569',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              fontSize: '14px'
-            }}
+            className="refresh-btn"
             onClick={fetchProducts}
             disabled={loading}
           >{loading ? 'Loading...' : 'Refresh'}</button>
-          <button
-            style={{
-              padding: '12px 24px',
-              border: 'none',
-              borderRadius: '12px',
-              background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-              color: 'white',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              fontSize: '14px',
-              boxShadow: '0 4px 15px rgba(59, 130, 246, 0.3)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}
-          >
+          <button className="add-product-btn">
             <MdAdd size={20} />
             <span>Add Product</span>
           </button>
@@ -308,86 +257,19 @@ export default function Products() {
       </div>
 
       {viewMode === 'grid' ? (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-          gap: '20px',
-          marginTop: '24px'
-        }}>
+        <div className="products-grid">
           {filteredProducts.map((product) => (
-            <div
-              key={product.id}
-              style={{
-                background: 'white',
-                borderRadius: '16px',
-                border: '1px solid #e2e8f0',
-                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-                overflow: 'hidden',
-                transition: 'all 0.3s ease',
-                cursor: 'pointer'
-              }}
-            >
-              <div style={{
-                position: 'relative',
-                height: '200px',
-                background: 'linear-gradient(135deg, #f8fafc, #e2e8f0)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <div style={{
-                  position: 'absolute',
-                  top: '12px',
-                  left: '12px',
-                  padding: '6px 12px',
-                  borderRadius: '20px',
-                  fontSize: '12px',
-                  fontWeight: '600',
-                  background: product.stock === 0 ? '#fee2e2' : '#dcfce7',
-                  color: product.stock === 0 ? '#dc2626' : '#166534',
-                  zIndex: 10
-                }}>
+            <div key={product.id} className="product-card">
+              <div className="product-image-container">
+                <div className={`stock-status ${product.stock === 0 ? 'out-of-stock' : 'in-stock'}`}>
                   {product.stock === 0 ? 'Out of Stock' : 'In Stock'}
                 </div>
 
-                <div style={{
-                  position: 'absolute',
-                  top: '12px',
-                  right: '12px',
-                  display: 'flex',
-                  gap: '8px',
-                  zIndex: 10
-                }}>
-                  <button style={{
-                    width: '36px',
-                    height: '36px',
-                    borderRadius: '50%',
-                    border: 'none',
-                    background: 'rgba(255, 255, 255, 0.9)',
-                    color: '#3b82f6',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'all 0.3s ease',
-                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-                  }}>
+                <div className="product-actions">
+                  <button className="action-btn edit">
                     <MdEdit size={16} />
                   </button>
-                  <button style={{
-                    width: '36px',
-                    height: '36px',
-                    borderRadius: '50%',
-                    border: 'none',
-                    background: 'rgba(255, 255, 255, 0.9)',
-                    color: '#ef4444',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'all 0.3s ease',
-                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-                  }}>
+                  <button className="action-btn delete">
                     <MdDelete size={16} />
                   </button>
                 </div>
@@ -395,119 +277,39 @@ export default function Products() {
                 <img
                   src={`http://localhost:5000/${product.images?.[currentImageIndex[product.id] || 0] || product.images?.[0] || '/images/logo1.png'}`}
                   alt={product.name}
-                  style={{
-                    width: '120px',
-                    height: '120px',
-                    objectFit: 'cover',
-                    borderRadius: '12px',
-                    border: '2px solid white',
-                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)',
-                    zIndex: 1
-                  }}
+                  className="product-image"
                 />
                 {product.images && product.images.length > 1 && (
                   <>
                     <button
                       onClick={(e) => handlePrevImage(product.id, e)}
-                      style={{
-                        position: 'absolute',
-                        left: '8px',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        width: '30px',
-                        height: '30px',
-                        borderRadius: '50%',
-                        border: 'none',
-                        background: 'rgba(255, 255, 255, 0.9)',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '16px',
-                        color: '#64748b',
-                        zIndex: 5
-                      }}
+                      className="image-nav-btn prev"
                     >‹</button>
                     <button
                       onClick={(e) => handleNextImage(product.id, e)}
-                      style={{
-                        position: 'absolute',
-                        right: '8px',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        width: '30px',
-                        height: '30px',
-                        borderRadius: '50%',
-                        border: 'none',
-                        background: 'rgba(255, 255, 255, 0.9)',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '16px',
-                        color: '#64748b',
-                        zIndex: 5
-                      }}
+                      className="image-nav-btn next"
                     >›</button>
                   </>
                 )}
               </div>
-              <div style={{
-                padding: '20px'
-              }}>
-                <h3 style={{
-                  fontSize: '18px',
-                  fontWeight: '700',
-                  color: '#1e293b',
-                  margin: '0 0 8px 0'
-                }}>{product.name}</h3>
-                <p style={{
-                  fontSize: '12px',
-                  color: '#64748b',
-                  margin: '0 0 8px 0'
-                }}>SKU: {product.sku}</p>
-                <p style={{
-                  fontSize: '14px',
-                  color: '#3b82f6',
-                  margin: '0 0 8px 0',
-                  fontWeight: '600'
-                }}>{product.category}</p>
-                <p style={{
-                  fontSize: '14px',
-                  color: '#64748b',
-                  margin: '0 0 16px 0',
-                  lineHeight: '1.4'
-                }}>{product.description}</p>
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  paddingTop: '16px',
-                  borderTop: '1px solid #f1f5f9'
-                }}>
-                  <div>
-                    <div style={{
-                      fontSize: '20px',
-                      fontWeight: '800',
-                      color: '#1e293b'
-                    }}>₹{product.price}</div>
-                    <div style={{
-                      fontSize: '12px',
-                      color: '#64748b'
-                    }}>{product.stock} units</div>
+              <div className="product-content">
+                <h3 className="product-title">{product.name}</h3>
+                <p className="product-sku">SKU: {product.sku}</p>
+                <p className="product-category">{product.category}</p>
+                <p className="product-description">{product.description}</p>
+                <div className="product-footer">
+                  <div className="price-info">
+                    <div className="price">₹{product.price}</div>
+                    <div className="stock">{product.stock} units</div>
                   </div>
-                  <div style={{
-                    fontSize: '12px',
-                    color: '#64748b',
-                    textAlign: 'right'
-                  }}>{product.supplier}</div>
+                  <div className="supplier-info">{product.supplier}</div>
                 </div>
               </div>
             </div>
           ))}
         </div>
       ) : (
-        <div style={{ marginTop: '24px' }}>
+        <div className="table-container">
           <Table
             data={filteredProducts}
             columns={[
@@ -515,11 +317,11 @@ export default function Products() {
                 key: 'product',
                 header: 'Product',
                 render: (row) => (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <img src={row.images?.[0] || '/images/logo1.png'} alt={row.name} style={{ width: '40px', height: '40px', borderRadius: '8px' }} />
-                    <div>
-                      <div style={{ fontWeight: '600' }}>{row.name}</div>
-                      <div style={{ fontSize: '12px', color: '#64748b' }}>SKU: {row.sku}</div>
+                  <div className="table-product-cell">
+                    <img src={`http://localhost:5000/${row.images?.[0] || '/images/logo1.png'}`} alt={row.name} className="table-product-image" />
+                    <div className="table-product-info">
+                      <div className="name">{row.name}</div>
+                      <div className="sku">SKU: {row.sku}</div>
                     </div>
                   </div>
                 )

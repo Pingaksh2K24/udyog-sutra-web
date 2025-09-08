@@ -10,6 +10,7 @@ import Products from './pages/products/page';
 import Inventory from './pages/inventory/page';
 import Orders from './pages/orders/page';
 import Customers from './pages/customers/page';
+import EditCustomer from './pages/customers/edit/page';
 import Suppliers from './pages/suppliers/page';
 import EditSupplier from './pages/suppliers/edit/page';
 import Reports from './pages/reports/page';
@@ -23,7 +24,9 @@ import ComprehensiveDataSeeder from './utils/ComprehensiveDataSeeder';
 
 export default function AdminPanel() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState(() => {
+    return localStorage.getItem('currentTab') || 'dashboard';
+  });
   const [routeParams, setRouteParams] = useState({});
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -38,6 +41,7 @@ export default function AdminPanel() {
       const { page, params } = event.detail;
       setActiveTab(page);
       setRouteParams(params || {});
+      localStorage.setItem('currentTab', page);
     };
     
     window.addEventListener('navigate', handleNavigation);
@@ -121,6 +125,7 @@ export default function AdminPanel() {
       case 'inventory': return <Inventory />;
       case 'orders': return <Orders />;
       case 'customers': return <Customers />;
+      case 'customers/edit': return <EditCustomer customerId={routeParams.customerId} />;
       case 'suppliers': return <Suppliers />;
       case 'suppliers-edit': return <EditSupplier supplierId={routeParams.id} />;
       case 'sales': return <NewSalePage />;
@@ -186,7 +191,10 @@ export default function AdminPanel() {
       
       <Sidebar 
         activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
+        setActiveTab={(tab) => {
+          setActiveTab(tab);
+          localStorage.setItem('currentTab', tab);
+        }} 
         sidebarOpen={sidebarOpen} 
         setSidebarOpen={setSidebarOpen} 
       />

@@ -190,7 +190,7 @@
 
 /* Override global form-group input styles */
 .form-group input {
-  padding: 14px 14px 14px 46px !important;
+  padding: 14px 14px 14px 32px !important;
   border: 2px solid #e2e8f0 !important;
   border-radius: 10px !important;
   font-size: 14px !important;

@@ -10,7 +10,7 @@ export default function ViewButton({ onClick, disabled = false }) {
       disabled={disabled}
       data-tooltip="View"
     >
-      <MdVisibility size={16} />
+      <MdVisibility size={14} />
     </button>
   );
 }

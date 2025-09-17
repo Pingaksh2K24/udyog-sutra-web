@@ -7,6 +7,7 @@ import Dropdown from '../../components/dropdown/Dropdown';
 import Input from '../../components/input/Input';
 import Table from '../../components/table/Table';
 import ActionButtons from '../../components/action/ActionButtons';
+import Router from '../../utils/Router';
 
 export default function Products() {
   const [viewMode, setViewMode] = useState('grid');
@@ -18,7 +19,8 @@ export default function Products() {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:5000/api/products');
+      const userId = document.cookie.split('; ').find(row => row.startsWith('userId='))?.split('=')[1] || '1';
+      const response = await axios.get(`http://localhost:5000/api/productList?user_id=${userId}`);
       setProducts(response.data || []);
     } catch (error) {
       setProducts(dummyProducts);
@@ -148,7 +150,10 @@ export default function Products() {
             onClick={fetchProducts}
             disabled={loading}
           >{loading ? 'Loading...' : 'Refresh'}</button>
-          <button className="add-product-btn">
+          <button 
+            className="add-product-btn"
+            onClick={() => Router.navigate('products/add')}
+          >
             <MdAdd size={20} />
             <span>Add Product</span>
           </button>

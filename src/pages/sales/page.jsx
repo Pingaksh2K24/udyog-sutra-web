@@ -5,13 +5,26 @@ import '../../templates/billing/styles.css';
 import './style.css';
 import toast from 'react-hot-toast';
 import DropdownWithSearch from '../../components/dropdownwithsearch/DropdownWithSearch';
-import Database from '../../database/index.js';
+import axios from 'axios';
 
 export default function NewSalePage() {
   const [customer, setCustomer] = useState({
     name: '',
     phone: '',
-    address: ''
+    email: '',
+    address: '',
+    gstNumber: '',
+    customerType: 'Regular'
+  });
+
+  const [saleDetails, setSaleDetails] = useState({
+    invoiceNumber: 'INV-' + Date.now(),
+    saleDate: new Date().toISOString().split('T')[0],
+    dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    paymentMethod: 'Cash',
+    paymentStatus: 'Pending',
+    notes: '',
+    terms: 'Payment due within 30 days'
   });
 
   const [items, setItems] = useState([
@@ -32,12 +45,13 @@ export default function NewSalePage() {
   const fetchProducts = async () => {
     setLoadingProducts(true);
     try {
-      const response = await Database.products.getAll();
-      console.log('Products API Response:', response);
+      const userId = document.cookie.split('; ').find(row => row.startsWith('userId='))?.split('=')[1] || '1';
+      const response = await axios.get(`http://localhost:5000/api/productList?user_id=${userId}`);
+      console.log('Products API Response:', response.data);
       
-      if (response && response.length > 0) {
-        const productOptions = response.map(product => ({
-          value: product._id || product.id,
+      if (response.data && response.data.length > 0) {
+        const productOptions = response.data.map(product => ({
+          value: product.productId || product.id,
           label: `${product.name} - ₹${product.price}`,
           price: product.price,
           name: product.name
@@ -110,7 +124,15 @@ export default function NewSalePage() {
   const total = subtotal - discountAmount + taxAmount;
 
   const handleSave = () => {
-    console.log('Sale saved:', { customer, items, discount, tax, total });
+    if (!customer.name || !customer.phone) {
+      toast.error('Please fill required customer details', { position: 'top-left' });
+      return;
+    }
+    if (items.some(item => !item.product || item.quantity <= 0)) {
+      toast.error('Please add valid items to the sale', { position: 'top-left' });
+      return;
+    }
+    console.log('Sale saved:', { customer, saleDetails, items, discount, tax, total });
     toast.success('Sale saved successfully!', { position: 'top-left' });
   };
 
@@ -120,13 +142,12 @@ export default function NewSalePage() {
 
   const invoiceData = {
     customer,
+    saleDetails,
     items,
     subtotal,
     discount,
     tax,
-    total,
-    invoiceNumber: 'INV-' + Date.now(),
-    date: new Date().toLocaleDateString('en-IN')
+    total
   };
 
   return (
@@ -137,26 +158,154 @@ export default function NewSalePage() {
       </div>
 
       <div className="sale-form">
-        <div className="customer-section">
-          <h3>Customer Details</h3>
-          <div className="customer-form">
-            <input
-              type="text"
-              placeholder="Customer Name"
-              value={customer.name}
-              onChange={(e) => setCustomer({...customer, name: e.target.value})}
-            />
-            <input
-              type="text"
-              placeholder="Phone Number"
-              value={customer.phone}
-              onChange={(e) => setCustomer({...customer, phone: e.target.value})}
-            />
-            <textarea
-              placeholder="Address"
-              value={customer.address}
-              onChange={(e) => setCustomer({...customer, address: e.target.value})}
-            />
+        <div className="form-grid">
+          <div className="customer-section">
+            <h3>Customer Information</h3>
+            <div className="form-row">
+              <div className="form-group">
+                <label>Customer Name *</label>
+                <input
+                  type="text"
+                  placeholder="Enter customer name"
+                  value={customer.name}
+                  onChange={(e) => setCustomer({...customer, name: e.target.value})}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Customer Type</label>
+                <select
+                  value={customer.customerType}
+                  onChange={(e) => setCustomer({...customer, customerType: e.target.value})}
+                >
+                  <option value="Regular">Regular</option>
+                  <option value="Wholesale">Wholesale</option>
+                  <option value="Retail">Retail</option>
+                  <option value="Corporate">Corporate</option>
+                </select>
+              </div>
+            </div>
+            <div className="form-row">
+              <div className="form-group">
+                <label>Phone Number *</label>
+                <input
+                  type="tel"
+                  placeholder="Enter phone number"
+                  value={customer.phone}
+                  onChange={(e) => setCustomer({...customer, phone: e.target.value})}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Email Address</label>
+                <input
+                  type="email"
+                  placeholder="Enter email address"
+                  value={customer.email}
+                  onChange={(e) => setCustomer({...customer, email: e.target.value})}
+                />
+              </div>
+            </div>
+            <div className="form-row">
+              <div className="form-group">
+                <label>GST Number</label>
+                <input
+                  type="text"
+                  placeholder="Enter GST number (optional)"
+                  value={customer.gstNumber}
+                  onChange={(e) => setCustomer({...customer, gstNumber: e.target.value})}
+                />
+              </div>
+            </div>
+            <div className="form-group">
+              <label>Billing Address</label>
+              <textarea
+                placeholder="Enter complete billing address"
+                value={customer.address}
+                onChange={(e) => setCustomer({...customer, address: e.target.value})}
+                rows={3}
+              />
+            </div>
+          </div>
+
+          <div className="sale-details-section">
+            <h3>Sale Information</h3>
+            <div className="form-row">
+              <div className="form-group">
+                <label>Invoice Number</label>
+                <input
+                  type="text"
+                  value={saleDetails.invoiceNumber}
+                  onChange={(e) => setSaleDetails({...saleDetails, invoiceNumber: e.target.value})}
+                  readOnly
+                />
+              </div>
+              <div className="form-group">
+                <label>Sale Date *</label>
+                <input
+                  type="date"
+                  value={saleDetails.saleDate}
+                  onChange={(e) => setSaleDetails({...saleDetails, saleDate: e.target.value})}
+                  required
+                />
+              </div>
+            </div>
+            <div className="form-row">
+              <div className="form-group">
+                <label>Due Date</label>
+                <input
+                  type="date"
+                  value={saleDetails.dueDate}
+                  onChange={(e) => setSaleDetails({...saleDetails, dueDate: e.target.value})}
+                />
+              </div>
+              <div className="form-group">
+                <label>Payment Method</label>
+                <select
+                  value={saleDetails.paymentMethod}
+                  onChange={(e) => setSaleDetails({...saleDetails, paymentMethod: e.target.value})}
+                >
+                  <option value="Cash">Cash</option>
+                  <option value="Card">Card</option>
+                  <option value="UPI">UPI</option>
+                  <option value="Bank Transfer">Bank Transfer</option>
+                  <option value="Cheque">Cheque</option>
+                  <option value="Credit">Credit</option>
+                </select>
+              </div>
+            </div>
+            <div className="form-row">
+              <div className="form-group">
+                <label>Payment Status</label>
+                <select
+                  value={saleDetails.paymentStatus}
+                  onChange={(e) => setSaleDetails({...saleDetails, paymentStatus: e.target.value})}
+                >
+                  <option value="Pending">Pending</option>
+                  <option value="Paid">Paid</option>
+                  <option value="Partial">Partial</option>
+                  <option value="Overdue">Overdue</option>
+                </select>
+              </div>
+            </div>
+            <div className="form-group">
+              <label>Notes</label>
+              <textarea
+                placeholder="Add any additional notes or comments"
+                value={saleDetails.notes}
+                onChange={(e) => setSaleDetails({...saleDetails, notes: e.target.value})}
+                rows={2}
+              />
+            </div>
+            <div className="form-group">
+              <label>Terms & Conditions</label>
+              <textarea
+                placeholder="Enter terms and conditions"
+                value={saleDetails.terms}
+                onChange={(e) => setSaleDetails({...saleDetails, terms: e.target.value})}
+                rows={2}
+              />
+            </div>
           </div>
         </div>
 

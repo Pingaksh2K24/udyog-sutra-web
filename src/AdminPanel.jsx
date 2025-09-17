@@ -7,6 +7,7 @@ import Header from './components/header/page';
 import Login from './pages/login/page';
 import Dashboard from './pages/dashboard/page';
 import Products from './pages/products/page';
+import AddProduct from './pages/products/add/page';
 import Inventory from './pages/inventory/page';
 import Orders from './pages/orders/page';
 import Customers from './pages/customers/page';
@@ -122,6 +123,7 @@ export default function AdminPanel() {
       case 'user-list': return <UserList />;
       case 'create-user': return <CreateUser />;
       case 'products': return <Products />;
+      case 'products/add': return <AddProduct />;
       case 'inventory': return <Inventory />;
       case 'orders': return <Orders />;
       case 'customers': return <Customers />;
